@@ -1,31 +1,27 @@
-# Trade central
-A FVM SPACE WARP ETHGLOBAL HACKATHON PROJECT
+# Next.js + Tailwind CSS Example
 
-## Project description
-TODO: Add project description
+This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.2)](https://tailwindcss.com/blog/tailwindcss-v3-2) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
 
-## Project structure
-  
-```console
-├── contracts (Foundry contracts)
-└── frontend (Next.js frontend, with React and TailwindCSS)
+## Deploy your own
+
+Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+
+## How to use
+
+Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+
+```bash
+npx create-next-app --example with-tailwindcss with-tailwindcss-app
 ```
 
-### Deploy foundry contracts
-
-```console
-cd contracts
-forge create --rpc-url <your_rpc_url> \
-    --constructor-args "ForgeUSD" "FUSD" 18 1000000000000000000000 \
-    --private-key <your_private_key> \
-    --etherscan-api-key <your_etherscan_api_key> \
-    --verify \
-    src/MyToken.sol:MyToken
+```bash
+yarn create next-app --example with-tailwindcss with-tailwindcss-app
 ```
 
-### Deploy frontend
-```console
-cd frontend
-yarn install
-yarn deploy
+```bash
+pnpm create next-app --example with-tailwindcss with-tailwindcss-app
 ```
+
+Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
