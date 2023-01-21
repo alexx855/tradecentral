@@ -3,13 +3,7 @@ import type { NextPage } from 'next';
 
 const Home: NextPage = () => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        padding: 12,
-      }}
-    >
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <ConnectButton />
     </div>
   );
