@@ -1,10 +1,9 @@
 import { ReactElement } from 'react';
 import Layout from '../../components/Layouts/layout';
-import { TradeItemProps } from '../../components/Trade/Trade';
-import Trade from '../../components/Trade/Trade';
+import Trade, { TradeProps } from '../../components/Trade/Trade';
 import { NextPageWithLayout } from '../_app';
 
-export const DUMMY_TRADE_ITEMS: TradeItemProps[] = [
+export const DUMMY_TRADE_ITEMS: TradeProps[] = [
   {
     id: 1,
     buyer: '0x1',
@@ -48,7 +47,7 @@ export const DUMMY_TRADE_ITEMS: TradeItemProps[] = [
 ]
 
 
-const TradePage: NextPageWithLayout<TradeItemProps> = (props) => (
+const TradePage: NextPageWithLayout<TradeProps> = (props) => (
   <section className="p-8">
     <Trade {...props} />
   </section>
