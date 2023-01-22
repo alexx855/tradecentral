@@ -7,9 +7,11 @@ import styles from "../../styles/api.module.css";
 import contractAdress from "./ContractAdress";
 export const SellItem = () => {
   const { address, isConnected } = useAccount();
-  const [email, setEmail] = useState("");
+  const [price, setPrice] = useState(0);
   const [tokenURI, setTokenURI] = useState("");
   const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
+
   
 
   const { config } = usePrepareContractWrite({
@@ -23,9 +25,9 @@ export const SellItem = () => {
       {
         "inputs": [
           {
-            "internalType": "string",
-            "name": "_email",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "_price",
+            "type": "uint256"
           },
           {
             "internalType": "string",
@@ -34,19 +36,24 @@ export const SellItem = () => {
           },
           {
             "internalType": "string",
-            "name": "image",
+            "name": "_description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_image",
             "type": "string"
           }
         ],
-        "name": "createUser",
+        "name": "createTrade",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
       },
     ],
-    args: [email, name, tokenURI],
-    enabled: [email, name, tokenURI],
-    functionName: "createUser",
+    args: [price, name, desc, tokenURI],
+    enabled: [price, name, desc, tokenURI],
+    functionName: "createTrade",
   });
   const { write } = useContractWrite(config);
 
@@ -66,15 +73,19 @@ export const SellItem = () => {
           <div className={styles.divForm}>
             
             <input className={styles.inputForm}
-              placeholder="email"
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="price"
+              onChange={(e) => setPrice(e.target.value)}
             />
             <input className={styles.inputForm}
               placeholder="name"
               onChange={(e) => setName(e.target.value)}
             />
             <input className={styles.inputForm}
-              placeholder="profile image"
+              placeholder="description"
+              onChange={(e) => setDesc(e.target.value)}
+            />
+            <input className={styles.inputForm}
+              placeholder="item image"
               onChange={(e) => setTokenURI(e.target.value)}
             />
             <br />
@@ -86,7 +97,7 @@ export const SellItem = () => {
               borderRadius={"10px"}
               size={"lg"}
             >
-              Create
+              LIST ITEM
             </button>
           </div>
         </div>
