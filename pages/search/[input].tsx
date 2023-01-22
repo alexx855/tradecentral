@@ -1,14 +1,18 @@
-import { NextPage } from 'next'
+import { ReactElement } from 'react';
+import Layout from '../../components/Layouts/layout';
+import { NextPageWithLayout } from '../_app';
 
 interface SearchProps {
   input: string;
 }
 
-const SearchPage: NextPage<SearchProps> = ({ input }) => (
-  <main>
-    <h1>Results for {input}</h1>
-    <p>TODO: this</p>
-  </main>
+const SearchPage: NextPageWithLayout<SearchProps> = ({ input }) => (
+  <>
+    <div className='p-3'>
+      <h1>Results for {input}</h1>
+      <p>TODO: list search results</p>
+    </div>
+  </>
 )
 
 SearchPage.getInitialProps = async (ctx) => {
@@ -21,6 +25,10 @@ SearchPage.getInitialProps = async (ctx) => {
 
   const props: SearchProps = { input }
   return props
+}
+
+SearchPage.getLayout = function getLayout(page: ReactElement) {
+  return (<Layout>{page}</Layout>)
 }
 
 export default SearchPage

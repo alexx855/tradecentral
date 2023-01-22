@@ -1,35 +1,24 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import type { NextPage } from 'next';
-import Link from 'next/link';
-import Account from '../components/Account/Account';
-import Search from '../components/Search/Search';
+import { ReactElement } from 'react';
+import Layout from '../components/Layouts/layout';
+import { NextPageWithLayout } from './_app';
 
-const Home: NextPage = () => {
+interface HomeProps {
+}
+
+const HomePage: NextPageWithLayout = (props: HomeProps) => {
   return (
-    <>
-
-      <div className="mx-auto max-w-[1200px]">
-        {/* Header */}
-        <header className="">
-          <div className="flex justify-between items-center p-3">
-            <Link href="/" className="mr-3 flex items-center">
-              TradeCentral
-            </Link>
-
-            <div className="relative z-10 flex grow items-center">
-              <Search />
-            </div>
-
-            <div className="ml-3 items-center w-[90px]">
-              <Account />
-            </div>
-
-          </div>
-        </header>
-
-      </div>
-    </>
+    <div className='p-3'>
+      TODO: define home page content,  list all available trades?
+    </div>
   );
 };
 
-export default Home;
+HomePage.getLayout = function getLayout(page: ReactElement) {
+  return (<Layout>{page}</Layout>)
+}
+
+
+HomePage.getInitialProps = async (ctx) => {
+  return {}
+}
+export default HomePage;
