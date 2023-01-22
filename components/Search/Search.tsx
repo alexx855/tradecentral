@@ -1,10 +1,17 @@
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const Search = () => {
 
   const [searchInput, setSearchInput] = useState("");
   const router = useRouter();
+
+  // set initial search input value from router query
+  useEffect(() => {
+    if (router.query.input) {
+      setSearchInput(router.query.input as string);
+    }
+  }, [router.query.input]);
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
