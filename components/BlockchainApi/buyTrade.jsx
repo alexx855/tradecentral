@@ -54,7 +54,7 @@ export const Buy = (id, price) => {
         <button
           onClick={() => write?.()}
         >
-          BUY NFT
+          BUY 
         </button>
       )}
     </>
