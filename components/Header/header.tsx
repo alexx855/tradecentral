@@ -10,9 +10,9 @@ const Header = () => {
   return (
     <>
       <div className="mx-auto max-w-[1200px]">
-        <header className="">
-          <div className="flex justify-between items-center p-3">
-            <Link href="/" className="mr-3 flex items-center">
+        <header className="pt-2 px-8">
+          <div className="flex justify-between items-center">
+            <Link href="/" className="mr-4 flex items-center">
               TradeCentral
             </Link>
 
@@ -20,7 +20,7 @@ const Header = () => {
               <Search />
             </div>
 
-            <div className="ml-3 items-center">
+            <div className="ml-4 items-center">
               <AccountNoSSR />
             </div>
 
