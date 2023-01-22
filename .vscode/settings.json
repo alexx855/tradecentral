@@ -20,5 +20,12 @@
   },
   "[solidity]": {
     "editor.defaultFormatter": "JuanBlanco.solidity"
-  }
+  },
+  "cSpell.words": [
+    "Filecoin",
+    "Hackathon",
+    "Rainbowkit",
+    "tradecentral",
+    "Wagmi"
+  ]
 }
