@@ -3,8 +3,7 @@ import Layout from '../components/Layouts/layout';
 import TradeItem from '../components/Trade/Trade';
 import { DUMMY_TRADE_ITEMS } from './trade/[tid]';
 import { NextPageWithLayout } from './_app';
-import Modal from "../components/TradeModal/TradeModal";
-
+import Modal from '../components/TradeModal/TradeModal';
 
 interface HomeProps {
 }
@@ -17,8 +16,8 @@ const HomePage: NextPageWithLayout = (props: HomeProps) => {
         <p className="font-light text-gray-500 sm:text-xl">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus, iure quod? Obcaecati ipsa voluptate eos cumque, ex amet sunt quia tempore sapiente et id, optio aut repellat ad? Sed, maiores?</p>
       </div>
 
-      <div className="flex justify-center m-5">
-        <Modal />
+      <div className="flex justify-center m-5"> 
+        <Modal/>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
