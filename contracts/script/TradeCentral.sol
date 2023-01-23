@@ -2,11 +2,13 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
+import {TradeCentral} from "../src/TradeCentral.sol";
 
-contract CounterScript is Script {
+contract TradeCentralScript is Script {
     function setUp() public {}
 
     function run() public {
         vm.broadcast();
+        new TradeCentral();
     }
 }
