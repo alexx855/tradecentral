@@ -11,85 +11,93 @@ contract TradeCentralTest is Test {
         trade = new TradeCentral();
     }
 
+    // creates a test user with the address 0x1
     function testCreateUser() public {
+        // create user
         string memory _email = "mails@alexpedersen.dev";
         string memory _name = "Alex Pedersen";
         string memory image = "NoImage";
-        // create user
+        // get user address
+        address userAddress = vm.addr(1);
+        vm.prank(userAddress);
         trade.createUser(_email, _name, image);
-        // asset user count
-        assertEq(trade.getUserCount(), 1);
-
+        // asset user lookup
+        TradeCentral.userData memory user = trade.lookUsers(userAddress);
+        // asset user data
+        assertEq(user.email, _email);
     }
 
     function testGetUser() public {
         // create user
         testCreateUser();
         // look for the user id
-        TradeCentral.userData memory user = trade.lookUsers(1);
-        // assert user id
-        assertEq(user.id, 1);
+        address userAddress = vm.addr(1);
+        // prank the user address
+        vm.prank(userAddress);
+        TradeCentral.userData memory user = trade.lookUsers(userAddress);
+        // should return the test user email
+        assertEq(user.email, "mails@alexpedersen.dev");
     }
 
     function testUpdateProfile() public {
         // create user
         testCreateUser();
-        // asset user count
-        assertEq(trade.getUserCount(), 1);
+
         // update user
         string memory _email = "nuevo@alexpedersen.dev";
         string memory _name = "alexx855.eth";
         string memory image = "ImageHash";
+
+        // prank the user address
+        address userAddress = vm.addr(1);
+        vm.prank(userAddress);
         trade.updateProfile(_email, _name, image);
 
         // asset user data
-        uint256 id = trade.getUserCount();
-        TradeCentral.userData memory user = trade.lookUsers(id);
+        TradeCentral.userData memory user = trade.lookUsers(userAddress);
         assertEq(user.email, _email);
         assertEq(user.name, _name);
         assertEq(user.image, image);
     }
 
-    function testCreateTrade() public {
+    function createTrade() public {
         uint256 _price = 100;
         string memory _name = "test";
         string memory _description = "test";
         string memory _image = "test";
         trade.createTrade(_price, _name, _description, _image);
-        // get the trade
-        TradeCentral.Trade memory _tradeOrder = trade.lookTrades(1);
+    }
+
+    function testCreateTrade() public {
+        createTrade();
         // assert trade count
-        assertEq(trade.getTradeCount(), 1);
-        // assert trade data
-        assertEq(_tradeOrder.price, _price);
-        assertEq(_tradeOrder.name, _name);
-        assertEq(_tradeOrder.description, _description);
-        assertEq(_tradeOrder.image, _image);
+        assertEq(trade.getTotalTrades(), 1);
     }
 
     function testCancelTrade() public {
         // create trade
-        testCreateTrade();
+        createTrade();
         // assert trade count
-        assertEq(trade.getTradeCount(), 1);
+        assertEq(trade.getTotalTrades(), 1);
         // cancel trade
         trade.cancelTrade(1);
         // assert trade, it shouldnt exist anymore and should be reverted
         vm.expectRevert("Trade does not exist");
         trade.lookTrades(1);
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 0);
     }
 
     function testCancelAllTrades() public {
-        // create 3 trades
-        testCreateTrade();
-        testCreateTrade();
-        testCreateTrade();
+        // create trade
+        createTrade();
+        createTrade();
+        createTrade();
         // assert trade count
-        assertEq(trade.getTradeCount(), 3);
-        // cancel all trade
+        assertEq(trade.getTotalTrades(), 3);
+        // cancel all trades
         trade.cancelAllTrades();
         // assert trade count
-        assertEq(trade.getTradeCount(), 0);
+        assertEq(trade.getTotalTrades(), 0);
     }
-    
 }
