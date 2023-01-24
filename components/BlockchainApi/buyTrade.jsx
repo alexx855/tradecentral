@@ -2,7 +2,7 @@ import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import contractAddress from "./contractAddress";
 
-export const Buy = (id, price) => {
+const BuyTrade = (id, price) => {
   const { address, isConnected } = useAccount();
   const itemId = id.id;
   const itemPrice = price.price;
@@ -38,25 +38,45 @@ export const Buy = (id, price) => {
       console.log(data);
     },
   });
-  const { data, isLoading, isSuccess, write, isError } =
-    useContractWrite(config);
+  const { data, isLoading, isSuccess, write, isError } = useContractWrite(config);
+
+  return (<>
+    <p>CARGANDO</p>
+  </>)
+
+
+  if (isLoading || typeof window === "undefined") {
+    console.log(isLoading); // ACA VA LO RENDERIZADO SI SE ESTA CARGANDO
+    return (<>
+      <p>CARGANDO</p>
+    </>)
+  }
 
   if (isError) {
-    return console.log(isError); // ACA VA LO RENDERIZADO SI SE PRODUCE UN ERROR
+    console.log(isError); // ACA VA LO RENDERIZADO SI SE PRODUCE UN ERROR
+    return (<>
+      <p>ERROR</p>
+    </>)
   }
   if (isSuccess) {
-      console.log(data); // ACA VA LO RENDERIZADO SI SE CON EXITO
+    console.log(data); // ACA VA LO RENDERIZADO SI SE CON EXITO
+
+    return (<>
+      <p>EXITO</p>
+    </>)
   }
 
   return (
     <>
       {isConnected && (
         <button
-          onClick={() => write?.()}
+          onClick={() => write()}
         >
-          BUY 
+          BUY
         </button>
       )}
     </>
   );
 };
+
+export default BuyTrade;

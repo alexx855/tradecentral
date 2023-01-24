@@ -1,20 +1,13 @@
-import React from "react";
 import {
-  erc721ABI,
-  goerli,
   paginatedIndexesConfig,
   useContractInfiniteReads,
-  useContractRead,
 } from "wagmi";
-import { BigNumber, ethers } from "ethers";
-import { useAccount } from "wagmi";
-import TokenURI from "./TokenURI.jsx";
-import { useEffect } from "react";
-import { useMemo } from "react";
-import contractAdress from "./ContractAdress";
+import { BigNumber } from "ethers";
+import contractAddress from "./contractAddress";
+
 const tradeData = {};
 const mlootContractConfig = {
-  address: contractAdress,
+  address: contractAddress,
   chainId: 5,
   abi: [
     {
@@ -98,10 +91,6 @@ export function GetAllItems() {
     ),
   });
 
-   
-
-
-  
   //get items from data and return in a new array
   const result = data?.pages?.map((page) => {
     return page?.map((item) => {

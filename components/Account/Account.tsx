@@ -1,8 +1,8 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Account = () => {
-
   return (
     <>
       <ConnectButton.Custom>
@@ -85,12 +85,12 @@ const Account = () => {
                       {chain.name}
                     </button>
 
-                    <button onClick={openAccountModal} type="button">
+                    <Link href={`/user/${account.address}`}>
                       {account.displayName}
                       {account.displayBalance
                         ? ` (${account.displayBalance})`
                         : ''}
-                    </button>
+                    </Link>
                   </div>
                 );
               })()}

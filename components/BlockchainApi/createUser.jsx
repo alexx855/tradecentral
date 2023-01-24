@@ -1,19 +1,17 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import { ethers } from "ethers";
-import { useState, useEffect } from "react";
-import { FaDollarSign, FaEthereum } from "react-icons/fa";
-import styles from "../../styles/api.module.css";
-import contractAdress from "./ContractAdress";
-export const SellItem = () => {
+import { useState } from "react";
+import contractAddress from "./contractAddress";
+
+const CreateUser = () => {
   const { address, isConnected } = useAccount();
   const [email, setEmail] = useState("");
   const [tokenURI, setTokenURI] = useState("");
   const [name, setName] = useState("");
-  
+
 
   const { config } = usePrepareContractWrite({
-    address: contractAdress,
+    address: contractAddress,
     chainId: 5,
     overrides: {
       from: address,
@@ -63,23 +61,23 @@ export const SellItem = () => {
             height: "100%",
           }}
         >
-          <div className={styles.divForm}>
-            
-            <input className={styles.inputForm}
+          <div className="">
+
+            <input className=""
               placeholder="email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="name"
               onChange={(e) => setName(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="profile image"
               onChange={(e) => setTokenURI(e.target.value)}
             />
             <br />
             {/* address form */}
-           
+
             <button
               onClick={() => write?.()}
               colorScheme="blue"
@@ -100,9 +98,11 @@ export const SellItem = () => {
             width: "100%",
           }}
         >
-         <h1>connect your wallet for create a profile</h1>
+            <h1>connect your wallet for create a profile</h1>
         </div>
       )}
     </>
   );
 };
+
+export default CreateUser;

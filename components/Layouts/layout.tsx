@@ -17,9 +17,9 @@ import { ReactNode } from "react";
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
-    goerli,
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : [mainnet]),
   ],
-  [process.env.NEXT_PUBLIC_ALCHEMY_ID ? alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }) : publicProvider()]
+  [process.env.NEXT_PUBLIC_ENABLE_TESTNETS ? alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID as string }) : publicProvider()]
 );
 
 const { wallets } = getDefaultWallets({

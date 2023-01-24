@@ -1,21 +1,17 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import { ethers } from "ethers";
-import { useState, useEffect } from "react";
-import { FaDollarSign, FaEthereum } from "react-icons/fa";
-import styles from "../../styles/api.module.css";
-import contractAdress from "./ContractAdress";
-export const SellItem = () => {
+import { useState } from "react";
+import contractAddress from "./contractAddress";
+
+export const CreateTrade = () => {
   const { address, isConnected } = useAccount();
   const [price, setPrice] = useState(0);
   const [tokenURI, setTokenURI] = useState("");
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
 
-  
-
   const { config } = usePrepareContractWrite({
-    address: contractAdress,
+    address: contractAddress,
     chainId: 5,
     overrides: {
       from: address,
@@ -72,19 +68,19 @@ export const SellItem = () => {
         >
           <div className={styles.divForm}>
             
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="price"
               onChange={(e) => setPrice(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="name"
               onChange={(e) => setName(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="description"
               onChange={(e) => setDesc(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="item image"
               onChange={(e) => setTokenURI(e.target.value)}
             />
@@ -117,3 +113,5 @@ export const SellItem = () => {
     </>
   );
 };
+
+export default CreateTrade;

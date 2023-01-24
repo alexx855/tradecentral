@@ -25,7 +25,11 @@
     "Filecoin",
     "Hackathon",
     "Rainbowkit",
+    "tailwindcss",
     "tradecentral",
     "Wagmi"
-  ]
+  ],
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
