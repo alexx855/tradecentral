@@ -10,30 +10,22 @@ import {
   ledgerWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, goerli } from 'wagmi/chains';
+import { mainnet, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { alchemyProvider } from "wagmi/providers/alchemy";
 import { ReactNode } from "react";
-
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+    goerli,
   ],
-  [publicProvider()]
+  [process.env.NEXT_PUBLIC_ALCHEMY_ID ? alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }) : publicProvider()]
 );
 
 const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: 'TradeCentral demo',
   chains,
 });
-
-const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
-};
 
 const connectors = connectorsForWallets([
   ...wallets,
@@ -58,7 +50,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+        <RainbowKitProvider chains={chains}>
           <Header />
           <main>{children}</main>
         </RainbowKitProvider>
