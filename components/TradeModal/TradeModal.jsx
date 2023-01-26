@@ -1,8 +1,66 @@
+import { BigNumber, ethers } from "ethers";
 import React, { useState } from "react";
+import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
+import contractAdress from "../BlockchainApi/contractAddress";
 
 const Modal = () => {
   const [showModal, setShowModal] = useState(false);
+  const {address, isConnected} = useAccount();
+  const [price, setPrice] = useState(0);
+  const [tokenURI, setTokenURI] = useState("");
+  const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
+
+
+  //@dev wagmi function 
+
+  const { config } = usePrepareContractWrite({
+    address: contractAdress,
+    chainId: 5,
+    overrides: {
+      from: address,
+      gasLimit: 1000000000,
+    },
+    abi: [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_image",
+            "type": "string"
+          }
+        ],
+        "name": "createTrade",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+    ],
+    args: [ethers.BigNumber.from(price), name, desc, tokenURI],
+    enabled: [price, name, desc, tokenURI],
+    functionName: "createTrade",
+  });
+  const { write } = useContractWrite(config);
+
+
+  // onChange={(e) => setTokenURI(e.target.value)} set token uri
   return (
+    
     <>
       <div className="flex justify-center m-5">        
           <button onClick={() => setShowModal(true)} id="defaultModalButton" data-modal-toggle="defaultModal" className="block text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" type="button">
@@ -10,7 +68,7 @@ const Modal = () => {
           </button>
       </div>
 
-      {showModal ? (
+      {showModal && isConnected ? (
     <>
       <div id="defaultModal" tabIndex={-1} aria-hidden="true" className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
           <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
@@ -31,7 +89,7 @@ const Modal = () => {
                       <div className="grid gap-4 mb-4 sm:grid-cols-2">
                           <div>
                               <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"/>Name
-                              <input type="text" name="name" id="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name"/>
+                              <input onChange={(e) => setName(e.target.value) } type="text" name="name" id="name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name"/>
                           </div>
                           <div>
                               <label htmlFor="brand" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brand</label>
@@ -39,7 +97,7 @@ const Modal = () => {
                           </div>
                           <div>
                               <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                              <input type="number" name="price" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999"/>
+                              <input onChange={(e) => setPrice(e.target.value)} type="number" name="price" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999"/>
                           </div>
                           <div>
                               <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
@@ -53,7 +111,7 @@ const Modal = () => {
                           </div>
                           <div className="sm:col-span-2">
                               <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                              <textarea id="description" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Write product description here"></textarea>                    
+                              <textarea onChange={(e) => setDesc(e.target.value)} id="description" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Write product description here"></textarea>                    
                           </div>
                       </div>
                       <button onClick={() => setShowModal(false)} type="submit" className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">

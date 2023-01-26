@@ -1,16 +1,9 @@
 import React from "react";
 import {
-  erc721ABI,
-  goerli,
   paginatedIndexesConfig,
   useContractInfiniteReads,
-  useContractRead,
 } from "wagmi";
 import { BigNumber, ethers } from "ethers";
-import { useAccount } from "wagmi";
-import TokenURI from "./TokenURI.jsx";
-import { useEffect } from "react";
-import { useMemo } from "react";
 import contractAdress from "./ContractAdress";
 const tradeData = {};
 const mlootContractConfig = {
