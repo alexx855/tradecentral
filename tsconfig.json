@@ -18,8 +18,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "components/TradeModal/TradeModal.jsx"
+    "**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }

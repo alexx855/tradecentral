@@ -5,7 +5,7 @@ import Modal from '../components/TradeModal/TradeModal';
 import { DUMMY_TRADE_ITEMS } from './trade/[tid]';
 import { NextPageWithLayout } from './_app';
 import {useIsMounted} from "../components/Utils/mounted";
-import {CreateUser} from "../components/BlockchainApi/createUser"
+import { CreateUser } from "../components/BlockchainApi/createUser"
 
 interface HomeProps {
 }
