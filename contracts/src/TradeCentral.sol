@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "../lib/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract TradeCentral is ReentrancyGuard {
     //@dev global variables
@@ -59,6 +59,7 @@ contract TradeCentral is ReentrancyGuard {
     }
 
     //@dev function create one trade
+
     function createTrade(
         uint256 _price,
         string memory _name,
@@ -89,6 +90,7 @@ contract TradeCentral is ReentrancyGuard {
     }
 
     //@dev function for update profile user
+
     function updateProfile(
         string memory _email,
         string memory _name,
@@ -109,7 +111,7 @@ contract TradeCentral is ReentrancyGuard {
 
     //@dev function for look trades in the market
     function lookTrades(uint256 _itemId) public view returns (Trade memory) {
-        // validate that trade exists
+      // validate that trade exists
         require(trades[_itemId].id > 0, "Trade does not exist");
         Trade storage _trade = trades[_itemId];
         return _trade;

@@ -1,14 +1,17 @@
 import { ReactElement } from 'react';
 import Layout from '../components/Layouts/layout';
 import TradeItem from '../components/Trade/Trade';
+import Modal from '../components/TradeModal/TradeModal';
 import { DUMMY_TRADE_ITEMS } from './trade/[tid]';
 import { NextPageWithLayout } from './_app';
-import Modal from '../components/TradeModal/TradeModal';
+import {useIsMounted} from "../components/Utils/mounted";
+import {CreateUser} from "../components/BlockchainApi/createUser"
 
 interface HomeProps {
 }
 
 const HomePage: NextPageWithLayout = (props: HomeProps) => {
+  const mounted = useIsMounted();
   return (
     <section className="p-8">
       <div className="mx-auto max-w-screen-sm text-center mb-8">
@@ -18,6 +21,8 @@ const HomePage: NextPageWithLayout = (props: HomeProps) => {
 
       <div className="flex justify-center m-5"> 
         <Modal/>
+        {/* {mounted ? <CreateUser/> : null} */}
+        
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">

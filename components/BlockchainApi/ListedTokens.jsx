@@ -2,9 +2,8 @@ import {
   paginatedIndexesConfig,
   useContractInfiniteReads,
 } from "wagmi";
-import { BigNumber } from "ethers";
-import contractAddress from "./contractAddress";
-
+import { BigNumber, ethers } from "ethers";
+import contractAdress from "./ContractAdress";
 const tradeData = {};
 const mlootContractConfig = {
   address: contractAddress,
