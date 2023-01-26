@@ -1,25 +1,23 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import { ethers } from "ethers";
-import { useState, useEffect } from "react";
-import { FaDollarSign, FaEthereum } from "react-icons/fa";
-import styles from "../../styles/api.module.css";
-import contractAdress from "./ContractAdress";
-export const SellItem = () => {
+import { useState } from "react";
+import { BigNumber } from "ethers";
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+
+export const CreateTrade = () => {
   const { address, isConnected } = useAccount();
   const [price, setPrice] = useState(0);
   const [tokenURI, setTokenURI] = useState("");
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
 
-  
-
   const { config } = usePrepareContractWrite({
-    address: contractAdress,
-    chainId: 5,
+    address: CONTRACT_ADDRESS,
+    // chainId: 5,
     overrides: {
       from: address,
-      gasLimit: 1000000,
+      // gasLimit: 1000000,
     },
     abi: [
       {
@@ -51,8 +49,8 @@ export const SellItem = () => {
         "type": "function"
       },
     ],
-    args: [price, name, desc, tokenURI],
-    enabled: [price, name, desc, tokenURI],
+    args: [BigNumber.from(price), name, desc, tokenURI],
+    // enabled: [price, name, desc, tokenURI],
     functionName: "createTrade",
   });
   const { write } = useContractWrite(config);
@@ -70,21 +68,21 @@ export const SellItem = () => {
             height: "100%",
           }}
         >
-          <div className={styles.divForm}>
+          <div className="">
             
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="price"
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(+e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="name"
               onChange={(e) => setName(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="description"
               onChange={(e) => setDesc(e.target.value)}
             />
-            <input className={styles.inputForm}
+            <input className=""
               placeholder="item image"
               onChange={(e) => setTokenURI(e.target.value)}
             />
@@ -93,9 +91,6 @@ export const SellItem = () => {
            
             <button
               onClick={() => write?.()}
-              colorScheme="blue"
-              borderRadius={"10px"}
-              size={"lg"}
             >
               LIST ITEM
             </button>
@@ -117,3 +112,5 @@ export const SellItem = () => {
     </>
   );
 };
+
+export default CreateTrade;

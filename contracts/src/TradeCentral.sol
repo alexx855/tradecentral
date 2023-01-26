@@ -5,10 +5,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract TradeCentral is ReentrancyGuard {
     //@dev global variables
+    uint256 tradeIds;
     address public owner;
-
-    uint256 userCount;
-    uint256 tradeCount;
+    uint256 public totalTrades;
+    uint256 public totalUsers;
 
     //@dev structs
     struct Trade {
@@ -23,8 +23,6 @@ contract TradeCentral is ReentrancyGuard {
     }
 
     struct userData {
-        uint256 userId;
-        address user;
         string email;
         string name;
         string image;
@@ -38,6 +36,14 @@ contract TradeCentral is ReentrancyGuard {
         owner = msg.sender;
     }
 
+    function getTotalTrades() public view returns (uint256) {
+        return totalTrades;
+    }
+
+    function getTotalUsers() public view returns (uint256) {
+        return totalUsers;
+    }
+
     //@dev function  create one userr
     function createUser(
         string memory _email,
@@ -48,14 +54,8 @@ contract TradeCentral is ReentrancyGuard {
         require(bytes(_email).length > 0, "Invalid email");
         require(bytes(_name).length > 0, "Invalid name");
         require(bytes(image).length > 0, "Invalid image");
-        userCount++;
-        users[msg.sender] = userData(
-            userCount,
-            msg.sender,
-            _email,
-            _name,
-            image
-        );
+        users[msg.sender] = userData(_email, _name, image);
+        totalUsers++;
     }
 
     //@dev function create one trade
@@ -66,14 +66,18 @@ contract TradeCentral is ReentrancyGuard {
         string memory _description,
         string memory _image
     ) external nonReentrant {
+        require(
+            bytes(users[msg.sender].email).length == 0,
+            "User already exist"
+        );
         require(msg.sender != address(0), "Invalid address");
         require(_price > 0, "Invalid price");
         require(bytes(_name).length > 0, "Invalid name");
         require(bytes(_description).length > 0, "Invalid description");
         require(bytes(_image).length > 0, "Invalid image");
-        tradeCount++;
-        trades[tradeCount] = Trade(
-            tradeCount,
+        tradeIds++;
+        trades[tradeIds] = Trade(
+            tradeIds,
             address(0),
             msg.sender,
             _price,
@@ -82,6 +86,7 @@ contract TradeCentral is ReentrancyGuard {
             _image,
             false
         );
+        totalTrades++;
     }
 
     //@dev function for update profile user
@@ -91,9 +96,12 @@ contract TradeCentral is ReentrancyGuard {
         string memory _name,
         string memory _image
     ) external nonReentrant {
+        require(
+            bytes(users[msg.sender].email).length > 0,
+            "User does not exist"
+        );
         require(msg.sender != address(0), "Invalid address");
         require(bytes(_email).length > 0, "Invalid email");
-        require(msg.sender == users[msg.sender].user, "Invalid user");
         require(bytes(_name).length > 0, "Invalid name");
         require(bytes(_image).length > 0, "Invalid image");
         users[msg.sender].email = _email;
@@ -103,8 +111,18 @@ contract TradeCentral is ReentrancyGuard {
 
     //@dev function for look trades in the market
     function lookTrades(uint256 _itemId) public view returns (Trade memory) {
+      // validate that trade exists
+        require(trades[_itemId].id > 0, "Trade does not exist");
         Trade storage _trade = trades[_itemId];
         return _trade;
+    }
+
+    //@dev function for look users in the market
+    function lookUsers(address _userAddress) public view returns (userData memory) {
+        // validate that user exists
+        require(bytes(users[_userAddress].email).length > 0, "User does not exist");
+        userData storage _user = users[_userAddress];
+        return _user;
     }
 
     //@dev function for buy one trade
@@ -117,6 +135,7 @@ contract TradeCentral is ReentrancyGuard {
         trades[_itemId].isSold = true;
         payable(trades[_itemId].seller).transfer(msg.value);
         delete trades[_itemId];
+        totalTrades--;
     }
 
     //@dev function for cancel one trade
@@ -126,14 +145,16 @@ contract TradeCentral is ReentrancyGuard {
         require(trades[_itemId].seller != address(0), "Invalid seller");
         require(trades[_itemId].seller == msg.sender, "Invalid seller");
         delete trades[_itemId];
+        totalTrades--;
     }
 
     //@dev function for withdraw one trade
     function cancelAllTrades() public nonReentrant {
         require(msg.sender != address(0), "Invalid address");
-        for (uint256 i = 1; i <= tradeCount; i++) {
+        for (uint256 i = 1; i <= tradeIds; i++) {
             if (trades[i].seller == msg.sender) {
                 delete trades[i];
+                totalTrades--;
             }
         }
     }

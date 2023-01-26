@@ -20,7 +20,7 @@ const Header = () => {
               <Search />
             </div>
 
-            <div className="ml-4 items-center">
+            <div className="ml-4 flex items-center">
               <AccountNoSSR />
             </div>
 

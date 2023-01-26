@@ -25,12 +25,13 @@ const SearchPage: NextPageWithLayout<SearchPageProps> = ({ input, resultsCount, 
       <>
         <h1>{resultsCount} results for <strong>{input}</strong></h1>
         <div className="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
-          {results.map((result) => {
+          {/* TODO: map results to use the User or Trade components */}
+          {/* {results.map((result) => {
             if ('user' in result) {
               return (<User {...result} key={result.id} />)
             }
             return (<Trade {...result} key={result.id} />)
-          })}
+          })} */}
         </div>
       </>
     ) : <NoResults />}

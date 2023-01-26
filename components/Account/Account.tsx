@@ -1,105 +1,77 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import Image from 'next/image';
+import Link from 'next/link';
+import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
 
-const Account = () => {
+export function NetworkSelect({ children }: { children: React.ReactNode }) {
+  const { chain } = useNetwork()
+  const { chains, error, isLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
 
   return (
     <>
-      <ConnectButton.Custom>
-        {({
-          account,
-          chain,
-          openAccountModal,
-          openChainModal,
-          openConnectModal,
-          authenticationStatus,
-          mounted,
-        }) => {
-          // Note: If your app doesn't use authentication, you
-          // can remove all 'authenticationStatus' checks
-          const ready = mounted && authenticationStatus !== 'loading';
-          const connected =
-            ready &&
-            account &&
-            chain &&
-            (!authenticationStatus ||
-              authenticationStatus === 'authenticated');
-
-          return (
-            <div
-              {...(!ready && {
-                'aria-hidden': true,
-                'style': {
-                  opacity: 0,
-                  pointerEvents: 'none',
-                  userSelect: 'none',
-                },
-              })}
-              className='inline-block'
+      {
+        chain && chains.findIndex((x) => x.id === chain.id) === -1 ? (
+          chains.map((x) => (
+            <button
+              disabled={!switchNetwork || x.id === chain?.id}
+              key={x.id}
+              onClick={() => switchNetwork?.(x.id)}
+              className='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
             >
-              {(() => {
-                if (!connected) {
-                  return (
-                    <button onClick={openConnectModal} type="button">
-                      Login
-                    </button>
-                  );
-                }
-
-                if (chain.unsupported) {
-                  return (
-                    <button onClick={openChainModal} type="button">
-                      Wrong network
-                    </button>
-                  );
-                }
-
-                return (
-                  <div className='flex gap-3'>
-                    <button
-                      onClick={openChainModal}
-                      className='flex items-center'
-                      type="button"
-                    >
-                      {chain.hasIcon && (
-                        <div
-                          style={{
-                            background: chain.iconBackground,
-                            width: 12,
-                            height: 12,
-                            borderRadius: 999,
-                            overflow: 'hidden',
-                            marginRight: 4,
-                          }}
-                        >
-                          {chain.iconUrl && (
-                            <Image
-                              alt={chain.name ?? 'Chain icon'}
-                              src={chain.iconUrl}
-                              width={12}
-                              height={12}
-                            />
-                          )}
-                        </div>
-                      )}
-                      {chain.name}
-                    </button>
-
-                    <button onClick={openAccountModal} type="button">
-                      {account.displayName}
-                      {account.displayBalance
-                        ? ` (${account.displayBalance})`
-                        : ''}
-                    </button>
-                  </div>
-                );
-              })()}
-            </div>
-          );
-        }}
-      </ConnectButton.Custom>
+              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                Wrong Network, switch to {x.name}
+                {isLoading && pendingChainId === x.id && ' (switching)'}
+                {error && ` (${error.message})`}
+              </span>
+            </button>
+          ))
+        ) : (children)
+      }
     </>
+  )
+}
+
+export function Connect() {
+  const { connect, connectors, error, isLoading, pendingConnector } = useConnect()
+  const { address, isConnected } = useAccount();
+  return (
+    <>
+      {error && <span>{error.message}</span>}
+
+      {
+        isConnected ? (
+          <Link href={`/user/${address}`} className='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'>
+            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+              Profile
+            </span>
+          </Link>
+        ) : connectors.map((connector) => (
+          <button
+            className='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800'
+            disabled={!connector.ready}
+            key={connector.id}
+            onClick={() => connect({ connector })}
+          >
+            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+              Connect with {connector.name}
+              {!connector.ready && ' (unsupported)'}
+              {isLoading &&
+                connector.id === pendingConnector?.id &&
+                ' (connecting)'}
+            </span>
+          </button>
+        ))
+      }
+
+    </>
+  )
+}
+
+const Account = () => {
+  return (
+    <NetworkSelect>
+      <Connect />
+    </NetworkSelect>
   );
+
 };
 
 export default Account

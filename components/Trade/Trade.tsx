@@ -1,7 +1,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-
+import BuyTrade from '../../components/BlockchainApi/buyTrade';
 export interface TradeProps {
   id: number;
   buyer: string;
@@ -13,6 +13,7 @@ export interface TradeProps {
   isSold: boolean;
   showUser?: boolean;
   showLink?: boolean;
+  showBuy?: boolean;
 }
 
 const Trade = (props: TradeProps) => {
@@ -36,6 +37,10 @@ const Trade = (props: TradeProps) => {
             <span className="font-medium ">{props.seller}</span>
           </Link>
         </div>)}
+
+        {!props.showBuy && (
+          <BuyTrade id={1} price={1} />
+        )}
 
         {props.showLink && (<Link href={`/trade/${props.id}`} className="inline-flex items-center font-medium text-yellow-600 -500 hover:underline">
           Read more

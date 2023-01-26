@@ -8,9 +8,5 @@ module.exports = {
         hostname: '**.amazonaws.com',
       },
     ],
-  },
-  plugins: {
-    autoprefixer: {},
-    tailwindcss: {},
-  },
+  }
 }
