@@ -1,60 +1,8 @@
-import Header from "../Header/header";
-import {
-  RainbowKitProvider,
-  getDefaultWallets,
-  connectorsForWallets,
-} from '@rainbow-me/rainbowkit';
-import {
-  argentWallet,
-  trustWallet,
-  ledgerWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { mainnet, goerli } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { ReactNode } from "react";
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : [mainnet]),
-  ],
-  [process.env.NEXT_PUBLIC_ENABLE_TESTNETS ? alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID as string }) : publicProvider()]
-);
-
-const { wallets } = getDefaultWallets({
-  appName: 'TradeCentral demo',
-  chains,
-});
-
-const connectors = connectorsForWallets([
-  ...wallets,
-  {
-    groupName: 'Other',
-    wallets: [
-      argentWallet({ chains }),
-      trustWallet({ chains }),
-      ledgerWallet({ chains }),
-    ],
-  },
-]);
-
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-  webSocketProvider,
-});
-
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          <Header />
-          <main>{children}</main>
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </>
+    <div className="mx-auto max-w-screen-lg text-center mb-8">
+      <main>{children}</main>
+    </div>
   )
 }
