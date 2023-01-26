@@ -6,6 +6,10 @@ import {TradeCentral} from "../src/TradeCentral.sol";
 
 contract TradeCentralTest is Test {
     TradeCentral public trade;
+    // create some test users addresses
+    address alex = address(0x1);
+    address tomi = address(0x2);
+    address abel = address(0x3);
 
     function setUp() public {
         trade = new TradeCentral();
