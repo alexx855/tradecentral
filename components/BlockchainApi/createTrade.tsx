@@ -1,6 +1,7 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useState } from "react";
+import { BigNumber } from "ethers";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
@@ -16,7 +17,7 @@ export const CreateTrade = () => {
     // chainId: 5,
     overrides: {
       from: address,
-      gasLimit: 1000000,
+      // gasLimit: 1000000,
     },
     abi: [
       {
@@ -48,8 +49,8 @@ export const CreateTrade = () => {
         "type": "function"
       },
     ],
-    args: [price, name, desc, tokenURI],
-    enabled: [price, name, desc, tokenURI],
+    args: [BigNumber.from(price), name, desc, tokenURI],
+    // enabled: [price, name, desc, tokenURI],
     functionName: "createTrade",
   });
   const { write } = useContractWrite(config);
@@ -71,7 +72,7 @@ export const CreateTrade = () => {
             
             <input className=""
               placeholder="price"
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(+e.target.value)}
             />
             <input className=""
               placeholder="name"

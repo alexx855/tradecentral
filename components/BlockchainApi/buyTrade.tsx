@@ -1,12 +1,13 @@
+import { BigNumber } from "ethers";
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
-const BuyTrade = (id, price) => {
+const BuyTrade = ({ id, price }: { id: number; price: number }) => {
   const { address, isConnected } = useAccount();
-  const itemId = id.id;
-  const itemPrice = price.price;
+  const itemId = id;
+  const itemPrice = price;
   const { config } = usePrepareContractWrite({
     address: CONTRACT_ADDRESS,
     // chainId: 5,
@@ -14,7 +15,7 @@ const BuyTrade = (id, price) => {
       from: address,
       value: itemPrice,
     },
-    functionName: "buyNFT",
+    functionName: "buyTrade",
     abi: [
       {
         "inputs": [
@@ -30,7 +31,7 @@ const BuyTrade = (id, price) => {
         "type": "function"
       },
     ],
-    args: [itemId],
+    args: [BigNumber.from(itemId)],
     onError: (error) => {
       console.log(error);
     },
@@ -40,37 +41,37 @@ const BuyTrade = (id, price) => {
   });
   const { data, isLoading, isSuccess, write, isError } = useContractWrite(config);
 
-  return (<>
-    <p>CARGANDO</p>
-  </>)
+  // return (<>
+  //   <p>CARGANDO</p>
+  // </>)
 
 
-  if (isLoading || typeof window === "undefined") {
+  if (isLoading) {
     console.log(isLoading); // ACA VA LO RENDERIZADO SI SE ESTA CARGANDO
-    return (<>
-      <p>CARGANDO</p>
-    </>)
+    // return (<>
+    //   <p>CARGANDO</p>
+    // </>)
   }
 
   if (isError) {
     console.log(isError); // ACA VA LO RENDERIZADO SI SE PRODUCE UN ERROR
-    return (<>
-      <p>ERROR</p>
-    </>)
+    // return (<>
+    //   <p>ERROR</p>
+    // </>)
   }
   if (isSuccess) {
     console.log(data); // ACA VA LO RENDERIZADO SI SE CON EXITO
 
-    return (<>
-      <p>EXITO</p>
-    </>)
+    // return (<>
+    //   <p>EXITO</p>
+    // </>)
   }
 
   return (
     <>
       {isConnected && (
         <button
-          onClick={() => write()}
+          onClick={() => write?.()}
         >
           BUY
         </button>

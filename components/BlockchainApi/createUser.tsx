@@ -16,7 +16,7 @@ export const CreateUser = () => {
     // chainId: 5,
     overrides: {
       from: address,
-      gasLimit: 1000000,
+      // gasLimit: 1000000,
     },
     abi: [
       {
@@ -44,7 +44,7 @@ export const CreateUser = () => {
       },
     ],
     args: [email, name, tokenURI],
-    enabled: [email, name, tokenURI],
+    // enabled: [email, name, tokenURI],
     functionName: "createUser",
   });
   const { write } = useContractWrite(config);
@@ -83,7 +83,7 @@ export const CreateUser = () => {
           {/* address form */}
 
           <button
-            onClick={() => write()}
+            onClick={() => write?.()}
           >
             Create an user for {address}
           </button>

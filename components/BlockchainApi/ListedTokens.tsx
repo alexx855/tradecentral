@@ -76,51 +76,52 @@ const mlootContractConfig = {
 };
 
 export function GetAllItems() {
-  const { data, fetchNextPage, isLoading } = useContractInfiniteReads({
-    cacheKey: "mlootAttributes",
-    ...paginatedIndexesConfig(
-      (index) => {
-        return [
-          {
-            ...mlootContractConfig,
-            functionName: "lookTrades",
-            args: [BigNumber.from(index)],
-          },
-        ];
-      },
-      { start: 1, perPage: 100, direction: "increment" }
-    ),
-  });
+  return []
+  // const { data, fetchNextPage, isLoading } = useContractInfiniteReads({
+  //   cacheKey: "mlootAttributes",
+  //   ...paginatedIndexesConfig(
+  //     (index) => {
+  //       return [
+  //         {
+  //           ...mlootContractConfig,
+  //           functionName: "lookTrades",
+  //           args: [BigNumber.from(index)],
+  //         },
+  //       ];
+  //     },
+  //     { start: 1, perPage: 100, direction: "increment" }
+  //   ),
+  // });
 
   //get items from data and return in a new array
-  const result = data?.pages?.map((page) => {
-    return page?.map((item) => {
-      if (!isLoading || item?.id != 0 || item?.id != null) {
-        tradeData = {
-          id: item[0]?.toNumber(),
-          buyer: item[1],
-          seller: item[2],
-          price: item[3],
-          name: item[4],
-          desc: item[5],
-          image: item[6],
-          sold: item[7],
-        };
-      }
-      return itemData;
-    });
-  });
-  const items = result?.map((item) => {
-    return item?.filter((item) => item.id !== 0);
-  });
+  // const result = data?.pages?.map((page) => {
+  //   return page?.map((item) => {
+  //     if (!isLoading || item?.id != 0 || item?.id != null) {
+  //       tradeData = {
+  //         id: item[0]?.toNumber(),
+  //         buyer: item[1],
+  //         seller: item[2],
+  //         price: item[3],
+  //         name: item[4],
+  //         desc: item[5],
+  //         image: item[6],
+  //         sold: item[7],
+  //       };
+  //     }
+  //     return itemData;
+  //   });
+  // });
+  // const items = result?.map((item) => {
+  //   return item?.filter((item) => item.id !== 0);
+  // });
 
-  const trades = items?.find((item) => item);
+  // const trades = items?.find((item) => item);
 
-  return {
-    items,
-    data,
-    fetchNextPage,
-    isLoading,
-    trades,
-  };
+  // return {
+  //   items,
+  //   data,
+  //   fetchNextPage,
+  //   isLoading,
+  //   trades,
+  // };
 }
