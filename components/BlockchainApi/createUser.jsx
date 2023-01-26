@@ -4,8 +4,8 @@ import { ethers } from "ethers";
 import { useState, useEffect } from "react";
 import { FaDollarSign, FaEthereum } from "react-icons/fa";
 import styles from "../../styles/api.module.css";
-import contractAdress from "./ContractAdress";
-export const SellItem = () => {
+import contractAdress from "./contractAddress";
+export const CreateUser = () => {
   const { address, isConnected } = useAccount();
   const [email, setEmail] = useState("");
   const [tokenURI, setTokenURI] = useState("");
