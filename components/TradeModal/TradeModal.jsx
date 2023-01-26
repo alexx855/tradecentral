@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from "ethers";
 import React, { useState } from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import contractAdress from "../BlockchainApi/contractAddress";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 const Modal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -15,8 +15,8 @@ const Modal = () => {
   //@dev wagmi function 
 
   const { config } = usePrepareContractWrite({
-    address: contractAdress,
-    chainId: 5,
+    address: CONTRACT_ADDRESS,
+    // chainId: 5,
     overrides: {
       from: address,
       gasLimit: 1000000000,

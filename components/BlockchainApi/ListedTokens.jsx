@@ -3,11 +3,13 @@ import {
   useContractInfiniteReads,
 } from "wagmi";
 import { BigNumber, ethers } from "ethers";
-import contractAdress from "./ContractAdress";
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+
 const tradeData = {};
 const mlootContractConfig = {
-  address: contractAddress,
-  chainId: 5,
+  address: CONTRACT_ADDRESS,
+  // chainId: 5,
   abi: [
     {
       "inputs": [

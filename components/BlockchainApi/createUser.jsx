@@ -1,10 +1,9 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import { ethers } from "ethers";
-import { useState, useEffect } from "react";
-import { FaDollarSign, FaEthereum } from "react-icons/fa";
-import styles from "../../styles/api.module.css";
-import contractAdress from "./contractAddress";
+import { useState } from "react";
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+
 export const CreateUser = () => {
   const { address, isConnected } = useAccount();
   const [email, setEmail] = useState("");
