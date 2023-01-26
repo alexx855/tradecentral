@@ -1,34 +1,47 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import Layout from '../../components/Layouts/layout';
-import Trade from '../../components/Trade/Trade';
 import User, { UserProps } from '../../components/User/User';
-import { DUMMY_TRADE_ITEMS } from '../trade/[tid]';
 import { NextPageWithLayout } from '../_app';
+import Trade, { TradeProps } from '../../components/Trade/Trade';
 import CreateUser from '../../components/BlockchainApi/createUser';
-import CreateTrade from '../../components/BlockchainApi/createTrade';
+// import UpdateUser from '../../components/BlockchainApi/updateUser';
+// import CreateTrade from '../../components/BlockchainApi/createTrade';
+// import buyTrade from '../../components/BlockchainApi/buyTrade';
 
+// TODO: remove this dummy data, load trades from the blockchain
+import { DUMMY_TRADE_ITEMS } from '../trade/[tid]';
 
 const UserPage: NextPageWithLayout<UserProps> = (props) => {
   const { address, isConnected } = useAccount();
   const [isConnectedUser, setIsConnectedUser] = useState(false);
+  const [userTrades, setUserTrades] = useState<TradeProps[]>([]);
+
   useEffect(() => {
-    console.log('address', address);
     setIsConnectedUser(address === props.address);
   }, [props.address, address])
+
+  /* TODO: load trades from the blockchaibn on the server */
+  useEffect(() => {
+    setUserTrades(DUMMY_TRADE_ITEMS);
+  }, [])
+
   return (
     <section className="p-8">
 
       <div className="mx-auto max-w-screen-sm text-center mb-8">
         <User {...props} />
-        {/* <CreateUser /> */}
-        {/* <CreateTrade /> */}
+        {isConnectedUser && (<div className='mb-10'>
+          {/* <CreateUser />
+          <CreateTrade /> */}
+        </div>)}
       </div>
 
-      <h3>Your trades</h3>
+      <h3>{isConnectedUser ? 'Your' : props.address} trades</h3>
       <div className="grid gap-8 lg:grid-cols-2">
-        {/* TODO: load trades from the blockchaibn on the server */}
-        {/* {DUMMY_TRADE_ITEMS.map((item) => (<Trade showLink {...item} key={item.id} />))} */}
+        {userTrades && userTrades.map((trade: any) => (
+          <Trade showLink {...trade} key={trade.id} />)
+        )}
       </div>
     </section>
   )
