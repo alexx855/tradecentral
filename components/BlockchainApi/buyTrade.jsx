@@ -1,15 +1,15 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import contractAddress from "./contractAddress";
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 const BuyTrade = (id, price) => {
   const { address, isConnected } = useAccount();
   const itemId = id.id;
   const itemPrice = price.price;
   const { config } = usePrepareContractWrite({
-    address: contractAddress,
-    chainId: 5,
-
+    address: CONTRACT_ADDRESS,
+    // chainId: 5,
     overrides: {
       from: address,
       value: itemPrice,

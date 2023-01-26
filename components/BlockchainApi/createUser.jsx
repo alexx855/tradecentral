@@ -1,7 +1,8 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useState } from "react";
-import contractAddress from "./contractAddress";
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 const CreateUser = () => {
   const { address, isConnected } = useAccount();
@@ -11,8 +12,8 @@ const CreateUser = () => {
 
 
   const { config } = usePrepareContractWrite({
-    address: contractAddress,
-    chainId: 5,
+    address: CONTRACT_ADDRESS,
+    // chainId: 5,
     overrides: {
       from: address,
       gasLimit: 1000000,
@@ -48,59 +49,47 @@ const CreateUser = () => {
   });
   const { write } = useContractWrite(config);
 
+
+  if (!isConnected) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <span className=" text-2xl font-bold text-gray-500">
+          Please connect your wallet
+        </span>
+      </div>
+    );
+  }
+
   return (
     <>
-      {isConnected ? (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            width: "100%",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <div className="">
 
-            <input className=""
-              placeholder="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input className=""
-              placeholder="name"
-              onChange={(e) => setName(e.target.value)}
-            />
-            <input className=""
-              placeholder="profile image"
-              onChange={(e) => setTokenURI(e.target.value)}
-            />
-            <br />
-            {/* address form */}
+      <div className=" flex flex-col items-center justify-center" >
+        <div className="">
 
-            <button
-              onClick={() => write?.()}
-              colorScheme="blue"
-              borderRadius={"10px"}
-              size={"lg"}
-            >
-              Create
-            </button>
-          </div>
+          <input className=""
+            placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input className=""
+            placeholder="name"
+            onChange={(e) => setName(e.target.value)}
+          />
+          {/* TODO: implement images storage with lighthouse SKD */}
+          {/* <input className=""
+            placeholder="profile image"
+            onChange={(e) => setTokenURI(e.target.value)}
+          /> */}
+          <br />
+          {/* address form */}
+
+          <button
+            onClick={() => write()}
+          >
+            Create an user for {address}
+          </button>
         </div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-            width: "100%",
-          }}
-        >
-            <h1>connect your wallet for create a profile</h1>
-        </div>
-      )}
+      </div>
+
     </>
   );
 };

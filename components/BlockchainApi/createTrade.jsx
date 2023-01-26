@@ -1,7 +1,8 @@
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useState } from "react";
-import contractAddress from "./contractAddress";
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 export const CreateTrade = () => {
   const { address, isConnected } = useAccount();
@@ -11,8 +12,8 @@ export const CreateTrade = () => {
   const [desc, setDesc] = useState("");
 
   const { config } = usePrepareContractWrite({
-    address: contractAddress,
-    chainId: 5,
+    address: CONTRACT_ADDRESS,
+    // chainId: 5,
     overrides: {
       from: address,
       gasLimit: 1000000,
@@ -66,7 +67,7 @@ export const CreateTrade = () => {
             height: "100%",
           }}
         >
-          <div className={styles.divForm}>
+          <div className="">
             
             <input className=""
               placeholder="price"
@@ -89,9 +90,6 @@ export const CreateTrade = () => {
            
             <button
               onClick={() => write?.()}
-              colorScheme="blue"
-              borderRadius={"10px"}
-              size={"lg"}
             >
               LIST ITEM
             </button>
