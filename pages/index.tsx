@@ -1,17 +1,21 @@
 import { ReactElement } from 'react';
 import Layout from '../components/Layouts/layout';
-import TradeItem from '../components/Trade/Trade';
-import Modal from '../components/TradeModal/TradeModal';
-import { DUMMY_TRADE_ITEMS } from './trade/[tid]';
+import TradeCard from '../components/Trade/Trade';
 import { NextPageWithLayout } from './_app';
-import { useIsMounted } from "../components/Utils/mounted";
-import { CreateUser } from "../components/BlockchainApi/createUser"
+import { useContractRead } from 'wagmi'
+import { BigNumber } from 'ethers';
+import dynamic from 'next/dynamic';
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+
+const TradesListNoSSR = dynamic(() => import('../components/BlockchainApi/listTrades'), {
+  ssr: false,
+})
 
 interface HomeProps {
 }
 
 const HomePage: NextPageWithLayout = (props: HomeProps) => {
-  const mounted = useIsMounted();
   return (
     <section className="p-8">
       <div className="mx-auto max-w-screen-sm text-center mb-8">
@@ -19,25 +23,19 @@ const HomePage: NextPageWithLayout = (props: HomeProps) => {
         <p className="font-light text-gray-500 sm:text-xl">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus, iure quod? Obcaecati ipsa voluptate eos cumque, ex amet sunt quia tempore sapiente et id, optio aut repellat ad? Sed, maiores?</p>
       </div>
 
-      <div className="flex justify-center m-5">
-        <Modal />
-        {/* {mounted ? <CreateUser/> : null} */}
-
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-2">
-        {DUMMY_TRADE_ITEMS.map((item) => (<TradeItem showLink showUser {...item} key={item.id} />))}
+      <div className="">
+        <TradesListNoSSR />
       </div>
     </section>
   );
 };
 
-HomePage.getLayout = function getLayout(page: ReactElement) {
-  return (<Layout>{page}</Layout>)
-}
+// HomePage.getLayout = function getLayout(page: ReactElement) {
+//   return (<Layout>{page}</Layout>)
+// }
 
-HomePage.getInitialProps = async (ctx) => {
-  return {}
-}
+// // TODO: load trades from the backend
+// HomePage.getInitialProps = async (ctx) => {
+// }
 
 export default HomePage;

@@ -10,7 +10,7 @@ import CreateUser from '../../components/BlockchainApi/createUser';
 // import buyTrade from '../../components/BlockchainApi/buyTrade';
 
 // TODO: remove this dummy data, load trades from the blockchain
-import { DUMMY_TRADE_ITEMS } from '../trade/[tid]';
+// import { DUMMY_TRADE_ITEMS } from '../trade/[tid]';
 
 const UserPage: NextPageWithLayout<UserProps> = (props) => {
   const { address, isConnected } = useAccount();
@@ -21,10 +21,10 @@ const UserPage: NextPageWithLayout<UserProps> = (props) => {
     setIsConnectedUser(address === props.address);
   }, [props.address, address])
 
-  /* TODO: load trades from the blockchaibn on the server */
-  useEffect(() => {
-    setUserTrades(DUMMY_TRADE_ITEMS);
-  }, [])
+  /* TODO: load trades from the blockchain on the server */
+  // useEffect(() => {
+  //   setUserTrades(DUMMY_TRADE_ITEMS);
+  // }, [])
 
   return (
     <section className="p-8">

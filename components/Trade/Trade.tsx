@@ -1,12 +1,13 @@
 
+import { BigNumber } from 'ethers';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import BuyTrade from '../../components/BlockchainApi/buyTrade';
 export interface TradeProps {
-  id: number;
-  buyer: string;
-  seller: string;
-  price: number;
+  id: BigNumber;
+  buyer: `0x${string}`;
+  seller: `0x${string}`;
+  price: BigNumber;
   name: string;
   description: string;
   image: string;
@@ -15,6 +16,10 @@ export interface TradeProps {
   showLink?: boolean;
   showBuy?: boolean;
 }
+
+const BuyTradeNoSSR = dynamic(() => import('../../components/BlockchainApi/buyTrade'), {
+  ssr: false,
+})
 
 const Trade = (props: TradeProps) => {
   const image = props.image || 'https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png';
@@ -39,7 +44,7 @@ const Trade = (props: TradeProps) => {
         </div>)}
 
         {!props.showBuy && (
-          <BuyTrade id={1} price={1} />
+          <BuyTradeNoSSR {...props} />
         )}
 
         {props.showLink && (<Link href={`/trade/${props.id}`} className="inline-flex items-center font-medium text-yellow-600 -500 hover:underline">
