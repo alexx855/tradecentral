@@ -70,9 +70,10 @@ contracts/out/TradeCentral.sol/TradeCentral.json
 Deploy the contract to goerli testnet:
 
 ```console
-export RPC_URL=<Your RPC endpoint, get from Alchemy>
-export PRIVATE_KEY=<Your wallets private key, get faucet from https://goerlifaucet.com/>
-forge create NFT --rpc-url=$RPC_URL --private-key=$PRIVATE_KEY --constructor-args <name> <symbol>
+export PRIVATE_KEY=<Private key with founds on the goeril network>
+export GOERLI_RPC_URL=https://eth-goerli.g.alchemy.com/v2/ussRf9HYqcYBRlAJfGww5-HNF2gGS3oN
+export ETHERSCAN_API_KEY=FTS9SQ5P7K31STQ5V5YTCJ68R6IZFGWBXN
+forge script script/TradeCentral.s.sol:TradeCentralScript --rpc-url $GOERLI_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY  -vvvv
 ```
 
 ### Project structure
