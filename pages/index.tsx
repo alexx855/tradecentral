@@ -5,6 +5,7 @@ import { NextPageWithLayout } from './_app';
 import { useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers';
 import dynamic from 'next/dynamic';
+import Balance from '../components/BlockchainApi/balance';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
