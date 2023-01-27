@@ -19,7 +19,7 @@ const { chains, provider, webSocketProvider } = configureChains(
 
 // Set up client
 const client = createClient({
-  autoConnect: true,
+  autoConnect: false, // Don't connect automatically, netxjs will fail hydration if we do
   connectors: [
     new MetaMaskConnector({ chains }),
   ],
