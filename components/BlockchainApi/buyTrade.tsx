@@ -1,19 +1,20 @@
 import { BigNumber } from "ethers";
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-
+import { TradeProps } from "../Trade/Trade";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
-const BuyTrade = ({ id, price }: { id: number; price: number }) => {
+
+const BuyTrade = ({ id, price, seller }: TradeProps) => {
   const { address, isConnected } = useAccount();
-  const itemId = id;
-  const itemPrice = price;
+
   const { config } = usePrepareContractWrite({
     address: CONTRACT_ADDRESS,
     // chainId: 5,
     overrides: {
       from: address,
-      value: itemPrice,
+      value: price,
+      gasLimit: BigNumber.from(30000000),      
     },
     functionName: "buyTrade",
     abi: [
@@ -25,13 +26,12 @@ const BuyTrade = ({ id, price }: { id: number; price: number }) => {
             "type": "uint256"
           }
         ],
-        "name": "buyTrade",
-        "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
+        "type": "function",
+        "name": "buyTrade"
       },
     ],
-    args: [BigNumber.from(itemId)],
+    args: [id],
     onError: (error) => {
       console.log(error);
     },
@@ -41,39 +41,26 @@ const BuyTrade = ({ id, price }: { id: number; price: number }) => {
   });
   const { data, isLoading, isSuccess, write, isError } = useContractWrite(config);
 
-  // return (<>
-  //   <p>CARGANDO</p>
-  // </>)
-
-
-  if (isLoading) {
-    console.log(isLoading); // ACA VA LO RENDERIZADO SI SE ESTA CARGANDO
-    // return (<>
-    //   <p>CARGANDO</p>
-    // </>)
-  }
-
   if (isError) {
-    console.log(isError); // ACA VA LO RENDERIZADO SI SE PRODUCE UN ERROR
-    // return (<>
-    //   <p>ERROR</p>
-    // </>)
   }
-  if (isSuccess) {
-    console.log(data); // ACA VA LO RENDERIZADO SI SE CON EXITO
 
-    // return (<>
-    //   <p>EXITO</p>
-    // </>)
+  if (isSuccess) {
+    // return <div>Success</div>;
   }
+
+  if (address === seller)
+    return null
 
   return (
     <>
       {isConnected && (
         <button
+          disabled={!write || !isConnected || isLoading}
           onClick={() => write?.()}
         >
-          BUY
+          {isLoading ? (
+            'Check Wallet'
+          ) : isSuccess ? ('Bought') : 'Buy'}
         </button>
       )}
     </>

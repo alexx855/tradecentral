@@ -66,10 +66,10 @@ contract TradeCentral is ReentrancyGuard {
         string memory _description,
         string memory _image
     ) external nonReentrant {
-        require(
-            bytes(users[msg.sender].email).length == 0,
-            "User already exist"
-        );
+        // require(
+        //     bytes(users[msg.sender].email).length == 0,
+        //     "User already exist"
+        // );
         require(msg.sender != address(0), "Invalid address");
         require(_price > 0, "Invalid price");
         require(bytes(_name).length > 0, "Invalid name");
@@ -115,6 +115,19 @@ contract TradeCentral is ReentrancyGuard {
         require(trades[_itemId].id > 0, "Trade does not exist");
         Trade storage _trade = trades[_itemId];
         return _trade;
+    }
+
+    // @dev function for look all open trades in the market
+    function lookAllTrades() public view returns (Trade[] memory) {
+        Trade[] memory _trades = new Trade[](totalTrades);
+        uint256 index = 0;
+        for (uint256 i = 1; i <= tradeIds; i++) {
+            if (trades[i].isSold == false) {
+                _trades[index] = trades[i];
+                index++;
+            }
+        }
+        return _trades;
     }
 
     //@dev function for look users in the market

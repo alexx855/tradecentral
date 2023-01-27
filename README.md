@@ -34,6 +34,7 @@ Create an .env.local file in the root directory and add the following
 ```console
 NEXT_PUBLIC_ENABLE_ANVIL=true
 NEXT_PUBLIC_CONTRACT_ADDRESS=<Your contract address, deployed to anvil>
+NEXT_PUBLIC_CHAIN_ID=1337
 ```
 
 Install dependencies and run the development server
@@ -58,6 +59,12 @@ Build and compile the ABIs:
 
 ```console
 forge build
+```
+
+Get the ABIs from the contracts/out folder
+
+```console
+contracts/out/TradeCentral.sol/TradeCentral.json
 ```
 
 Deploy the contract to goerli testnet:

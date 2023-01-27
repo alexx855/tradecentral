@@ -104,4 +104,21 @@ contract TradeCentralTest is Test {
         // assert trade count
         assertEq(trade.getTotalTrades(), 0);
     }
+
+    function testLookAllTrades() public {
+       // look all trades
+        TradeCentral.Trade[] memory noTrades = trade.lookAllTrades();
+        // assert trade count
+        assertEq(noTrades.length, 0);
+        // create trade
+        createTrade();
+        createTrade();
+        createTrade();
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 3);
+        // look all trades
+        TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
+        // assert trade count
+        assertEq(allTrades.length, 3);
+    }
 }
