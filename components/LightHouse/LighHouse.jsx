@@ -2,7 +2,7 @@ import React from "react";
 import lighthouse from '@lighthouse-web3/sdk';
 const API_KEY = process.env.NEXT_PUBLIC__LIGHTHOUSE_API
 
-function Lighthouse() {
+
 
   const progressCallback = (progressData) => {
     let percentageDone =
@@ -17,11 +17,5 @@ function Lighthouse() {
     console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
   }
 
-  return (
-    <div>
-      <input onChange={e => deploy(e)} type="file" />
-    </div>
-  );
-}
 
-export default Lighthouse;
+
