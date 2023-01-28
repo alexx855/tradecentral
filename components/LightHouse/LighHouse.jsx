@@ -1,7 +1,8 @@
 import React from "react";
 import lighthouse from '@lighthouse-web3/sdk';
+const API_KEY = process.env.NEXT_PUBLIC__LIGHTHOUSE_API
 
-function App() {
+function Lighthouse() {
 
   const progressCallback = (progressData) => {
     let percentageDone =
@@ -11,7 +12,7 @@ function App() {
 
   const deploy = async (e) => {
     // Push file to lighthouse node
-    const output = await lighthouse.upload(e, "", progressCallback);
+    const output = await lighthouse.upload(e, API_KEY, progressCallback);
 
     console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
   }
@@ -23,4 +24,4 @@ function App() {
   );
 }
 
-export default App;
+export default Lighthouse;
