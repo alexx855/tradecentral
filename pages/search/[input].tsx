@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ReactElement } from 'react';
 import Layout from '../../components/Layouts/layout';
-import Trade, { TradeProps } from '../../components/Trade/Trade';
+import Trade, { TradeProps } from '../../components/Trade/TradeCard';
 import User, { UserProps } from '../../components/User/User';
 import { NextPageWithLayout } from '../_app';
 
@@ -13,9 +13,9 @@ interface SearchPageProps {
 
 const NoResults = () => (
   <div className="mx-auto max-w-screen-sm text-center">
-    <p className="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl">Sorry, we can{"'"}t find anything. </p>
+    <p className="mb-4 text-3xl tracking-tight font-bold md:text-4xl">Sorry, we can{"'"}t find anything. </p>
     <p className="mb-4 text-lg font-light text-gray-500">You{"'"}ll find lots to explore on the home page. </p>
-    <Link href="/" className="inline-flex text-white bg-yellow-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark my-4">Back to Homepage</Link>
+    <Link href="/" className="inline-flex text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark my-4">Back to Homepage</Link>
   </div>
 )
 

@@ -1,21 +1,24 @@
 import React from "react";
-import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
+import { Address, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useState } from "react";
+import { BigNumber } from "ethers";
+import { UserProps } from "../User/User";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-export const ChangeProfile = () => {
-  const { address, isConnected } = useAccount();
+export const ChangeProfile = (props: UserProps) => {
+
   const [email, setEmail] = useState("");
   const [tokenURI, setTokenURI] = useState("");
   const [name, setName] = useState("");
 
-
   const { config } = usePrepareContractWrite({
     address: CONTRACT_ADDRESS,
+    chainId: +CHAIN_ID!,
     overrides: {
-      from: address,
-      // gasLimit: 1000000,
+      from: props.address,
+      gasLimit: BigNumber.from(1000000),
     },
     abi: [
     	{
@@ -30,11 +33,11 @@ export const ChangeProfile = () => {
 						"name": "_name",
 						"type": "string"
 					},
-					{
-						"internalType": "string",
-						"name": "_image",
-						"type": "string"
-					}
+					// {
+					// 	"internalType": "string",
+					// 	"name": "_image",
+					// 	"type": "string"
+					// }
 				],
 				"name": "updateProfile",
 				"outputs": [],
@@ -42,21 +45,10 @@ export const ChangeProfile = () => {
 				"type": "function"
 			},
     ],
-    args: [email, name, tokenURI],
+    args: [email, name],
     functionName: "updateProfile",
   });
   const { write } = useContractWrite(config);
-
-
-  if (!isConnected) {
-    return (
-      <div className="flex flex-col items-center justify-center">
-        <span className=" text-2xl font-bold text-gray-500">
-          Please connect your wallet
-        </span>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -65,10 +57,12 @@ export const ChangeProfile = () => {
         <div className="">
 
           <input className=""
+            defaultValue={props.email}
             placeholder="email"
             onChange={(e) => setEmail(e.target.value)}
           />
           <input className=""
+            defaultValue={props.name}
             placeholder="name"
             onChange={(e) => setName(e.target.value)}
           />

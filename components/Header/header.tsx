@@ -9,10 +9,10 @@ const AccountNoSSR = dynamic(() => import('../Account/Account'), {
 const Header = () => {
   return (
     <>
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto max-w-[1200px] text-gray-900 dark:text-white">
         <header className="pt-2 px-8">
           <div className="flex justify-between items-center">
-            <Link href="/" className="mr-4 flex items-center">
+            <Link href="/" className="mr-4 flex items-center ">
               TradeCentral
             </Link>
 
