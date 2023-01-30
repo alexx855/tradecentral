@@ -6,10 +6,9 @@
     "start": "next start",
     "lint": "next lint",
     "foundry-build": "cd contracts && forge build",
-    "foundry-test": "cd contracts && forge test",
+    "foundry-test": "cd contracts && forge test -vv",
     "foundry-abi": "cd contracts && forge inspect TradeCentral abi",
-    "foundry-node": "anvil --chain-id 1337",
-    "foundry-deploy": "7",
+    "foundry-node": "anvil --chain-id 1337 --port 8545 --block-time 1",
     "prepare": "husky install"
   },
   "dependencies": {

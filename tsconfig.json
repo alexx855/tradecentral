@@ -27,6 +27,7 @@
 "components/LightHouse/LighHouse.jsx"
 ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "hardhat"
   ]
 }
