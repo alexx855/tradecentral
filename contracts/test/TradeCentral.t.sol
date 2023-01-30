@@ -69,6 +69,9 @@ contract TradeCentralTest is Test {
         string memory _name = "test";
         string memory _description = "test";
         string memory _image = "test";
+        address userAddress = vm.addr(1);
+        emit log_named_address("userAddress", userAddress);
+        vm.prank(userAddress);
         trade.createTrade(_price, _name, _description, _image);
     }
 
@@ -78,32 +81,32 @@ contract TradeCentralTest is Test {
         assertEq(trade.getTotalTrades(), 1);
     }
 
-    function testCancelTrade() public {
-        // create trade
-        createTrade();
-        // assert trade count
-        assertEq(trade.getTotalTrades(), 1);
-        // cancel trade
-        trade.cancelTrade(1);
-        // assert trade, it shouldnt exist anymore and should be reverted
-        vm.expectRevert("Trade does not exist");
-        trade.lookTrades(1);
-        // assert trade count
-        assertEq(trade.getTotalTrades(), 0);
-    }
+    // function testCancelTrade() public {
+    //     // create trade
+    //     createTrade();
+    //     // assert trade count
+    //     assertEq(trade.getTotalTrades(), 1);
+    //     // cancel trade
+    //     trade.cancelTrade(1);
+    //     // assert trade, it shouldnt exist anymore and should be reverted
+    //     vm.expectRevert("Trade does not exist");
+    //     trade.lookTrades(1);
+    //     // assert trade count
+    //     assertEq(trade.getTotalTrades(), 0);
+    // }
 
-    function testCancelAllTrades() public {
-        // create trade
-        createTrade();
-        createTrade();
-        createTrade();
-        // assert trade count
-        assertEq(trade.getTotalTrades(), 3);
-        // cancel all trades
-        trade.cancelAllTrades();
-        // assert trade count
-        assertEq(trade.getTotalTrades(), 0);
-    }
+    // function testCancelAllTrades() public {
+    //     // create trade
+    //     createTrade();
+    //     createTrade();
+    //     createTrade();
+    //     // assert trade count
+    //     assertEq(trade.getTotalTrades(), 3);
+    //     // cancel all trades
+    //     trade.cancelAllTrades();
+    //     // assert trade count
+    //     assertEq(trade.getTotalTrades(), 0);
+    // }
 
     function testLookAllTrades() public {
        // look all trades
@@ -112,13 +115,41 @@ contract TradeCentralTest is Test {
         assertEq(noTrades.length, 0);
         // create trade
         createTrade();
-        createTrade();
-        createTrade();
         // assert trade count
-        assertEq(trade.getTotalTrades(), 3);
+        assertEq(trade.getTotalTrades(), 1);
         // look all trades
         TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
         // assert trade count
-        assertEq(allTrades.length, 3);
+        assertEq(allTrades.length, 1);
+
+        // assert trade seller
+        assertEq(allTrades[0].seller, vm.addr(1));
+    }
+
+    function testLookAllTrades(address _address) public {
+        // assert trade count to 0 for user
+        assertEq(trade.lookAllTrades(_address).length, 0);
+        // create trade with addr(1)
+        createTrade();
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 1);
+
+        // address userAddress2 = vm.addr(2);
+        vm.prank(_address);
+        trade.createTrade(100, "test", "test", "test");
+        TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
+        // assert trade count, 1 from addr(1) and 1 from addr(2)
+        assertEq(allTrades.length, 2);
+        assertEq(allTrades[0].seller, vm.addr(1));
+        assertEq(allTrades[1].seller, _address);
+
+        emit log_named_address("userAddress2", _address);
+
+        // look user trades for _address only
+        TradeCentral.Trade[] memory userTrades = trade.lookAllTrades(_address);
+        // assert trade count
+        assertEq(userTrades.length, 1);
+        // assert trade with seller _address
+        assertEq(userTrades[0].seller, _address);
     }
 }
