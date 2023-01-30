@@ -24,9 +24,9 @@ anvil
 Deploy the contract to the local node:
 
 ```console
-export PRIVATE_KEY=<Private key generated from anvil>
-forge script script/TradeCentral.s.sol:TradeCentralScript --fork-url http://localhost:8545 \
---private-key $PRIVATE_KEY --broadcast
+export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cd contracts
+forge script script/TradeCentral.s.sol:TradeCentralScript --fork-url http://127.0.0.1:8545 --private-key $PRIVATE_KEY --broadcast
 ```
 
 Create an .env.local file in the root directory and add the following
@@ -74,6 +74,16 @@ export PRIVATE_KEY=<Private key with founds on the goeril network>
 export GOERLI_RPC_URL=https://eth-goerli.g.alchemy.com/v2/ussRf9HYqcYBRlAJfGww5-HNF2gGS3oN
 export ETHERSCAN_API_KEY=FTS9SQ5P7K31STQ5V5YTCJ68R6IZFGWBXN
 forge script script/TradeCentral.s.sol:TradeCentralScript --rpc-url $GOERLI_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY  -vvvv
+```
+
+### Hardhat Scripts
+
+Script to deploy dummy data to the contract
+
+```console
+cd hardhat
+npx hardhat run deploy.ts --network localhost
+npx hardhat run deploy.ts --network goeril
 ```
 
 ### Project structure
