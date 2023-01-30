@@ -2,6 +2,9 @@ import { BigNumber, ethers } from "ethers";
 import React, { useState } from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+import lighthouse from '@lighthouse-web3/sdk';
+const API_KEY = process.env.NEXT_PUBLIC__LIGHTHOUSE_API
+
 
 const Modal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -87,11 +90,7 @@ const Modal = () => {
   });
   const { write, isLoading, isSuccess, data } = useContractWrite(config);
 
-  // if (isSuccess) {
-  //   setShowModal(false);
-  // }
-
-  // onChange={(e) => setTokenURI(e.target.value)} set token uri
+ 
 
   const handleFrom = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,6 +98,32 @@ const Modal = () => {
     // TODO: validate from before submit
     write?.();
   };
+
+
+
+  //light house 
+ 
+
+interface ProgressData {
+  total: number;
+  uploaded: number;
+}
+
+const progressCallback = (progressData: ProgressData) => {
+  if(progressData){
+    let percentageDone = ((progressData.uploaded / progressData.total) * 100)?.toFixed(2);
+    console.log(percentageDone);
+  }
+};
+
+  const deploy = async (e: any) => {
+    // Push file to lighthouse node
+    const output = await lighthouse.upload(e, "38052b02-fa7c-44e9-beba-0df2baa98eea", progressCallback);
+    const uri = 'https://gateway.lighthouse.storage/ipfs/' + output.data.Hash;
+    setTokenURI(uri);
+    console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
+  }
+
 
   return (
     <>
@@ -163,6 +188,10 @@ const Modal = () => {
                     <div className="sm:col-span-2">
                       <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                       <textarea defaultValue={desc} onChange={(e) => setDesc(e.target.value)} id="description" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Write product description here"></textarea>
+                    </div>
+                    <div>
+                      <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image</label>
+                      <input  onChange={e=>deploy(e)} type="file" name="image" id="image" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999" />
                     </div>
                   </div>
                   <button disabled={!write} type="submit" className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
