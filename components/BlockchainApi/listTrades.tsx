@@ -1,15 +1,30 @@
 import React from "react";
-import { useContractRead } from "wagmi";
-import TradeCard from "../Trade/Trade";
+import { Address, useContractRead } from "wagmi";
+import TradeCard from "../Trade/TradeCard";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-export const ListTrades = () => {
+interface ListTradeProps {
+  user?: Address
+  filterClosed?: boolean
+
+}
+
+export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
   const { data, isError, isLoading } = useContractRead({
     address: CONTRACT_ADDRESS,
+    chainId: +CHAIN_ID!,
     abi: [
       {
-        "inputs": [],
+
+        "inputs": user ? [
+          {
+            "internalType": "address",
+            "name": "_userAddress",
+            "type": "address"
+          }
+        ] : [],
         "name": "lookAllTrades",
         "outputs": [
           {
@@ -62,9 +77,10 @@ export const ListTrades = () => {
         ],
         "stateMutability": "view",
         "type": "function"
-      }
+      },
     ],
     functionName: 'lookAllTrades',
+    args: user ? [user] : [],
     onError(err) {
       console.error(err)
     },
@@ -89,7 +105,7 @@ export const ListTrades = () => {
         </div>
       ) : data && data.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {data.map((trade) => (<TradeCard key={trade.id.toNumber()} {...trade} />))}
+              {data.map((trade) => (<TradeCard showLink key={trade.id.toNumber()} {...trade} />))}
         </div>
       ) : (
         <div className="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">

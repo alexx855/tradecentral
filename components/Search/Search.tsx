@@ -24,26 +24,19 @@ const Search = () => {
 
   return (
     <form
-      className="w-full"
+      className="relative w-full"
       onSubmit={submitSearch}>
-      <div className="flex w-full shadow-[0_1px_2px_0_rgb(0,0,0,20%)]">
-        <input
-          className="h-[24px] p-3 pr-0 box-content w-full rounded-sm border-none  outline-none placeholder:font-thin placeholder:text-black placeholder:text-opacity-25 focus:outline-offset-0"
-          placeholder={"Search trades and users..."}
-          type="search"
+      <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <input type="search" id="default-search" className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={"Search trades and users..."} 
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-        />
-
-        <button
-          className="items-center  bg-none p-3"
-          type="submit">
-          <svg className="w-[24px] h-[24px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path fill="#000" d="m21.915 20.297-4.101-4.673c1.157-1.457 1.796-3.124 1.918-5 .08-1.22-.08-2.401-.481-3.545a9.01 9.01 0 0 0-1.731-3.003 9.02 9.02 0 0 0-2.753-2.106 8.882 8.882 0 0 0-3.452-.938c-1.22-.08-2.4.08-3.544.482a9.01 9.01 0 0 0-3.004 1.73 9.021 9.021 0 0 0-2.106 2.753 8.88 8.88 0 0 0-.938 3.452c-.08 1.22.081 2.4.482 3.545a9.01 9.01 0 0 0 1.73 3.002 9.022 9.022 0 0 0 2.753 2.107 8.852 8.852 0 0 0 3.452.938c1.877.122 3.612-.296 5.207-1.253l4.102 4.66c.286.345.659.532 1.12.562.443.029.837-.108 1.182-.411s.532-.676.561-1.12a1.569 1.569 0 0 0-.397-1.181m-7.402-5.949c-1.195 1.048-2.58 1.521-4.158 1.418-1.578-.103-2.89-.752-3.938-1.946-1.049-1.194-1.521-2.58-1.418-4.158.103-1.577.751-2.89 1.946-3.938 1.194-1.048 2.58-1.521 4.158-1.418 1.577.103 2.89.752 3.938 1.946s1.521 2.58 1.418 4.158c-.103 1.578-.752 2.89-1.946 3.938" />
-          </svg>
-        </button>
-
+          onChange={(e) => setSearchInput(e.target.value)} required />
+        <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
       </div>
+
     </form>
   );
 };

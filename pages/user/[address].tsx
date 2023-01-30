@@ -1,54 +1,31 @@
-import { ReactElement, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { ReactElement } from 'react';
 import Layout from '../../components/Layouts/layout';
-import User, { UserProps } from '../../components/User/User';
+import UserProfile, { UserProps } from '../../components/User/User';
 import { NextPageWithLayout } from '../_app';
-import Trade, { TradeProps } from '../../components/Trade/Trade';
-import CreateUser from '../../components/BlockchainApi/createUser';
-// import UpdateUser from '../../components/BlockchainApi/updateUser';
-// import CreateTrade from '../../components/BlockchainApi/createTrade';
-// import buyTrade from '../../components/BlockchainApi/buyTrade';
+import dynamic from 'next/dynamic';
+import { Address } from 'wagmi';
 
-// TODO: remove this dummy data, load trades from the blockchain
-// import { DUMMY_TRADE_ITEMS } from '../trade/[tid]';
+const TradesListNoSSR = dynamic(() => import('../../components/BlockchainApi/listTrades'), {
+  ssr: false,
+})
 
 const UserPage: NextPageWithLayout<UserProps> = (props) => {
-  const { address, isConnected } = useAccount();
-  const [isConnectedUser, setIsConnectedUser] = useState(false);
-  const [userTrades, setUserTrades] = useState<TradeProps[]>([]);
-
-  useEffect(() => {
-    setIsConnectedUser(address === props.address);
-  }, [props.address, address])
-
-  /* TODO: load trades from the blockchain on the server */
-  // useEffect(() => {
-  //   setUserTrades(DUMMY_TRADE_ITEMS);
-  // }, [])
 
   return (
     <section className="p-8">
-
       <div className="mx-auto max-w-screen-sm text-center mb-8">
-        <User {...props} />
-        {isConnectedUser && (<div className='mb-10'>
-          {/* <CreateUser />
-          <CreateTrade /> */}
-        </div>)}
+        <UserProfile {...props} />
       </div>
-
-      <h3>{isConnectedUser ? 'Your' : props.address} trades</h3>
-      <div className="grid gap-8 lg:grid-cols-2">
-        {userTrades && userTrades.map((trade: any) => (
-          <Trade showLink {...trade} key={trade.id} />)
-        )}
+      <h1 className=" text-center w-full mb-8 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">User <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">trades</mark></h1>
+      <div className="grid gap-8 ">
+        <TradesListNoSSR user={props.address} filterClosed={false} />
       </div>
     </section>
   )
 }
 
 UserPage.getInitialProps = async (ctx) => {
-  const address = ctx.query.address as string;
+  const address = ctx.query.address as Address;
   // TODO: fetch user data from backend, email, name and avatar image.
 
   const user: UserProps = {
@@ -58,7 +35,6 @@ UserPage.getInitialProps = async (ctx) => {
   // TODO: fetch user data from backend
   return user
 }
-
 
 UserPage.getLayout = function getLayout(page: ReactElement) {
   return (<Layout>{page}</Layout>)
