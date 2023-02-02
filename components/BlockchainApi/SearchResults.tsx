@@ -1,30 +1,35 @@
 import React from "react";
-import { Address, useContractRead } from "wagmi";
+import { useContractRead } from "wagmi";
 import TradeCard from "../Trade/TradeCard";
-
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-interface ListTradeProps {
-  user?: Address
-  filterClosed?: boolean
-
-}
-
-export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
-  const { data, isError, isLoading } = useContractRead({
+export const SearchResults = ({ country = "", category = "", name = "" }: { country?: string, category?: string, name?: string }) => {
+  const { data: trades, isError, isLoading } = useContractRead({
     address: CONTRACT_ADDRESS,
     chainId: +CHAIN_ID!,
     abi: [
       {
-        "inputs": user ? [
+        "inputs": [
           {
-            "internalType": "address",
-            "name": "_userAddress",
-            "type": "address"
+            "internalType": "string",
+            "name": "_country",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_category",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
           }
-        ] : [],
-        "name": "lookAllTrades",
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "name": "searchTradesByAll",
         "outputs": [
           {
             "internalType": "struct TradeCentral.Trade[]",
@@ -83,13 +88,11 @@ export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
               }
             ]
           }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+        ]
       },
     ],
-    functionName: 'lookAllTrades',
-    args: user ? [user] : [],
+    functionName: 'searchTradesByAll',
+    args: [country, category, name],
     onError(err) {
       console.error(err)
     },
@@ -112,18 +115,23 @@ export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
         <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
           <span className="font-medium">Error</span> Something went wrong
         </div>
-      ) : data && data.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {/* workarround to limit it to 6, please update the contract and add some kind of pagination */}
-              {data.slice(0, 6).map((trade) => (<TradeCard showLink key={trade.id.toNumber()} {...trade} />))}
-        </div>
+      ) : trades && trades.length > 0 ? (
+        <>
+          <div className="mx-auto max-w-screen-sm text-center mb-8">
+            <h1 className="mb-4 text-2xl font-extrabold  tracking-tight text-gray-900 dark:text-white">Results for: <br /><mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">{name || category || country}</mark></h1>
+          </div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {trades.map((trade) => (<TradeCard key={trade.id.toNumber()} {...trade} />))}
+          </div>
+        </>
       ) : (
         <div className="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">
-          <span className="font-medium">Ops!</span> No trades found yet, try to create one.
+          <span className="font-medium">Ops!</span> No results found for {name}
         </div>
       )}
     </>
   );
+
 };
 
-export default ListTrades;
+export default SearchResults;

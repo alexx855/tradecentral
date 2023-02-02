@@ -1,35 +1,27 @@
-import Link from 'next/link';
 import { ReactElement } from 'react';
 import Layout from '../../components/Layouts/layout';
 import { NextPageWithLayout } from '../_app';
 import dynamic from 'next/dynamic';
-import { normalizeString } from '../../utils';
 
 const SearchResultsNoSSR = dynamic(() => import('../../components/BlockchainApi/SearchResults'), {
   ssr: false,
 })
 
-interface SearchPageProps {
-  slug: string;
-  input: string;
-}
-
-const SearchPage: NextPageWithLayout<SearchPageProps> = ({ slug }) => (
+const SearchPage: NextPageWithLayout<{ category: string }> = ({ category }) => (
   <section>
-    <SearchResultsNoSSR name={slug} />
+    <SearchResultsNoSSR category={category} />
   </section>
 )
 
 SearchPage.getInitialProps = async (ctx) => {
   // get the query string from context [input]
-  const input = ctx.query.input
+  const category = ctx.query.cid
 
-  if (typeof input !== 'string' || input.length === 0) {
-    throw new Error('Invalid input')
+  if (typeof category !== 'string' || category.length === 0) {
+    throw new Error('Invalid category')
   }
 
-  const props: SearchPageProps = { slug: normalizeString(input), input }
-  return props
+  return { category }
 }
 
 SearchPage.getLayout = function getLayout(page: ReactElement) {

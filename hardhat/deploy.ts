@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { randEmail, randFullName, randNumber, randProductDescription, randProductName } from '@ngneat/falso';
+import { randCountry, randEmail, randFullName, randNumber, randProductCategory, randProductDescription, randProductName } from '@ngneat/falso';
 import fs from 'node:fs'
 import * as dotenv from 'dotenv'
 
@@ -42,8 +42,8 @@ async function main() {
 
   // print the total users on the contract
   const contractWithDeployerWallet = TradeCentral.connect(deployerWallet);
-  const totalTrades = await contractWithDeployerWallet.getTotalUsers();
-  const totalUsers = await contractWithDeployerWallet.getTotalUsers();
+  const totalTrades = await contractWithDeployerWallet.currentTrade();
+  const totalUsers = await contractWithDeployerWallet.currentUser();
   console.log(`Total trades on the contract: ${totalTrades}`);
   console.log(`Total users on the contract: ${totalUsers}`);
 
@@ -55,7 +55,7 @@ async function main() {
       // const userExists = await TradeCentral.userExists(userWallet.address);
       // console.log(`User ${user.name} with email ${user.email} exists: ${userExists}`);
       // if (userExists) continue;
-      const tx = await contractWithWallet['createUser(string,string)'](user.email, user.name);
+      const tx = await contractWithWallet['createUser(string,string)'](user.ema il, user.name);
       const receipt = await tx.wait();
       console.log(`User ${user.name} created with email ${user.email} at block ${receipt.blockNumber}`);
     }
@@ -65,14 +65,18 @@ async function main() {
     // Create a new trades for each user
     let tradesToCreate = 2;
     for (const userWallet of usersWallets) {
-      tradesToCreate *= 2;
+      tradesToCreate++;
       const contractWithWallet = TradeCentral.connect(userWallet);
       for (let i = 0; i < tradesToCreate; i++) {
-        const tx = await contractWithWallet['createTrade(uint256,string,string)'](
+        const tx = await contractWithWallet['createTrade(uint256,string,string,string,string,string)'](
           ethers.utils.parseEther(`0.00${randNumber({ min: 1, max: 99 })}`),
           randProductName(),
-          `${randProductDescription()}`
+          `${randProductDescription()}`,
+          randProductCategory(),
+          randCountry(),
+          ""
         );
+
         const receipt = await tx.wait();
         console.log(`Trade for user #${tradesToCreate} created at block ${receipt.blockNumber}`);
       }

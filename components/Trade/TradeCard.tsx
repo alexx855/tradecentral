@@ -2,18 +2,19 @@
 import { BigNumber, utils } from 'ethers';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Address } from 'wagmi';
 import tradePlaceholderPic from '../../public/image-1@2x.jpg'
 
 export interface TradeProps {
   id: BigNumber;
-  buyer: Address;
-  seller: Address;
+  buyer: `0x${string}`;
+  seller: `0x${string}`;
   price: BigNumber;
-  name: string;
   description: string;
+  image: string;
+  name: readonly string[];
+  category: readonly string[];
+  country: readonly string[];
   isSold: boolean;
-  image?: string;
   showUser?: boolean;
   showLink?: boolean;
 }
@@ -22,12 +23,12 @@ const Trade = (props: TradeProps) => {
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <Link href={`/trade/${props.id}`} >
-        {/* TODO: load real images, this is a placeholder */}
-        <Image className="w-full h-auto mb-4" src={tradePlaceholderPic} alt={`${props.name} image`} />
+        {/* TODO: load real images, this is just a placeholder */}
+        <Image className="w-full h-auto mb-4" src={tradePlaceholderPic} alt={`${props.name[1]} image`} />
       </Link>
       <div className="px-5 pb-5">
         <Link href={`/trade/${props.id}`} >
-          <h5 className="text-xl mb-4 font-semibold tracking-tight text-gray-900 dark:text-white">{props.name}</h5>
+          <h5 className="text-xl mb-4 font-semibold tracking-tight text-gray-900 dark:text-white">{props.name[1]}</h5>
         </Link>
 
         <div className="flex items-center justify-between">
