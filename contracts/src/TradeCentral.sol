@@ -634,12 +634,19 @@ contract TradeCentral is ReentrancyGuard {
         require(trades[_itemId].seller != address(0), "Invalid seller");
         require(trades[_itemId].seller != msg.sender, "Invalid seller");
         trades[_itemId].buyer = msg.sender;
-        trades[_itemId].isSold = true;
-        payable(trades[_itemId].seller).transfer(msg.value);
+        // payable(trades[_itemId].seller).transfer(msg.value);
+        // delete trades[_itemId];
+        // decrementTrade();
+    }
+  //@dev function for set in true the isSold
+    function staking(uint256 _itemId) public nonReentrant{
+        require(trades[_itemId].isSold == false, "Invalid trade, item sold");
+        require(trades[_itemId].seller == msg.sender, "Invalid seller");
+        trades[_itemId].isSold = true; 
+        payable(trades[_itemId].seller).transfer(trades[_itemId].price);
         delete trades[_itemId];
         decrementTrade();
     }
-
     //@dev function for cancel one trade
     function cancelTrade(uint256 _itemId) public nonReentrant {
         require(msg.sender != address(0), "Invalid address");
