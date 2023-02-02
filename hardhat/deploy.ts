@@ -3,9 +3,7 @@ import { randCountry, randEmail, randFullName, randNumber, randProductCategory, 
 import fs from 'node:fs'
 import * as dotenv from 'dotenv'
 
-// check if the network is localhost from the process.argv  --network localhost
-const isLocalhost = process.argv.includes('--network') && process.argv[process.argv.indexOf('--network') + 1] === 'localhost';
-dotenv.config({ path: isLocalhost ? '../.env.local' : '../.env' })
+dotenv.config({ path: '../.env.local' })
 
 async function main() {
   // deployer account, with founds on the network

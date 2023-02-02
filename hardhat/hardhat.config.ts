@@ -1,10 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from 'dotenv'
-
-// check if the network is localhost from the process.argv  --network localhost
-const isLocalhost = process.argv.includes('--network') && process.argv[process.argv.indexOf('--network') + 1] === 'localhost';
-dotenv.config({ path: isLocalhost ? '../.env.local' : '../.env' })
+dotenv.config({ path: '../.env.local' })
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
