@@ -68,11 +68,12 @@ contract TradeCentralTest is Test {
         uint256 _price = 100;
         string memory _name = "test";
         string memory _description = "test";
-        string memory _image = "test";
+        string memory _category = "test";
+        string memory _cuntry = "test";
+        string memory _image = "";
         address userAddress = vm.addr(1);
-        emit log_named_address("userAddress", userAddress);
         vm.prank(userAddress);
-        trade.createTrade(_price, _name, _description, _image);
+        trade.createTrade(_price, _name, _description, _category, _cuntry, _image);
     }
 
     function testCreateTrade() public {
@@ -136,14 +137,14 @@ contract TradeCentralTest is Test {
 
         // address userAddress2 = vm.addr(2);
         vm.prank(_address);
-        trade.createTrade(100, "test", "test", "test");
+        trade.createTrade(100, "test", "test", "test", "test", "");
         TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
         // assert trade count, 1 from addr(1) and 1 from addr(2)
         assertEq(allTrades.length, 2);
         assertEq(allTrades[0].seller, vm.addr(1));
         assertEq(allTrades[1].seller, _address);
 
-        emit log_named_address("userAddress2", _address);
+        // emit log_named_address("userAddress2", _address);
 
         // look user trades for _address only
         TradeCentral.Trade[] memory userTrades = trade.lookAllTrades(_address);
@@ -151,5 +152,48 @@ contract TradeCentralTest is Test {
         assertEq(userTrades.length, 1);
         // assert trade with seller _address
         assertEq(userTrades[0].seller, _address);
+    }
+
+    // test search, by name, category, country
+    function testSearch() public {
+        // create test trade
+        createTrade();
+        createTrade();
+        // create trade with data 
+        trade.createTrade(100, "name",  "description", "category", "country", "image");
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 3);
+        // look all trades
+        TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
+        // assert trade count
+        assertEq(allTrades.length, 3);
+        // search by country
+        TradeCentral.Trade[] memory searchTrades = trade.searchTradesByAll("country", "", "");
+        // assert trade count
+        assertEq(searchTrades.length, 1);
+        // search by country category
+        TradeCentral.Trade[] memory searchTrades2 = trade.searchTradesByAll("country", "category", "");
+        // assert trade count
+        assertEq(searchTrades2.length, 1);
+        // search by country category name
+        TradeCentral.Trade[] memory searchTrades3 = trade.searchTradesByAll("country", "category", "name");
+        // assert trade count
+        assertEq(searchTrades3.length, 1);
+    }
+
+    function testGetIndexedData() public {
+        // create test trade
+        createTrade();
+        // create a trade with wierd data and charateres to test the search
+        trade.createTrade(100, "testing",  "description", "category", " -Country 1&  Coun", "image");
+        // get the countries
+        string[][] memory countries = trade.getCountries();
+        // emit log_named_string("country", countries[1]);
+        // assert countries count
+        assertEq(countries.length, 2);
+        // assert country name
+        // emit log(countries[]);
+        assertEq(countries[1][0], "--country-1---coun");
+        assertEq(countries[1][1], " -Country 1&  Coun");
     }
 }
