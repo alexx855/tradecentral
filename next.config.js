@@ -1,12 +1,27 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+// https://gateway.lighthouse.storage/ipfs/
+const nextConfig = {
   reactStrictMode: true,
+  swcMinify: false,
   images: {
-    remotePatterns: [
+    domains: ['gateway.lighthouse.storage'],
+  },
+}
+
+
+webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  config.module.rules.push({
+    test: /\.md$/,
+    use: [
       {
-        protocol: 'https',
-        hostname: '**.amazonaws.com',
+        loader: "ipfs-loader",
+        options: {
+          ipfsGateway: "gateway.lighthouse.storage",
+        },
       },
     ],
-  }
-}
+  });
+  return config;
+},
+
+  module.exports = nextConfig;
