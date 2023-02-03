@@ -101,6 +101,40 @@ export const SearchResults = ({ country = "", category = "", name = "" }: { coun
     }
   })
 
+  const { data: term, isError: isErrorTerm, isLoading: isLoadingTerm } = useContractRead({
+    address: CONTRACT_ADDRESS,
+    chainId: +CHAIN_ID!,
+    abi: [
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_term",
+            "type": "string"
+          }
+        ],
+        "name": "getSearchTerm",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+    ],
+    functionName: 'getSearchTerm',
+    args: [country || category || name],
+    onError(err) {
+      console.error(err)
+    },
+    onSuccess(data) {
+      console.log(data)
+    }
+  })
+
   return (
     <>
       {isLoading ? (
@@ -118,7 +152,7 @@ export const SearchResults = ({ country = "", category = "", name = "" }: { coun
       ) : trades && trades.length > 0 ? (
         <>
           <div className="mx-auto max-w-screen-sm text-center mb-8">
-            <h1 className="mb-4 text-2xl font-extrabold  tracking-tight text-gray-900 dark:text-white">Results for: <br /><mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">{name || category || country}</mark></h1>
+                <h1 className="mb-4 text-2xl font-extrabold  tracking-tight text-gray-900 dark:text-white">Results for: <br /><mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">{term || country || category || name}</mark></h1>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {trades.map((trade) => (<TradeCard key={trade.id.toNumber()} {...trade} />))}
