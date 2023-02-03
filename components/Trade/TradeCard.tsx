@@ -24,7 +24,7 @@ const Trade = (props: TradeProps) => {
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <Link href={`/trade/${props.id}`} >
         {/* TODO: load real images, this is just a placeholder */}
-        <Image className="w-full h-auto mb-4" src={props.image || tradePlaceholderPic} alt={`${props.name[1]} image`} />
+        <Image className="w-full h-auto mb-4" src={props.image} alt={`${props.name[1]} image`} />
       </Link>
       <div className="px-5 pb-5">
         <Link href={`/trade/${props.id}`} >

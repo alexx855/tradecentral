@@ -13,7 +13,9 @@ const Modal = () => {
   const [tokenURI, setTokenURI] = useState("imghash");
   const [name, setName] = useState("name");
   const [desc, setDesc] = useState("desc");
-
+  const [category, setCategory] = useState("category");
+  const [country, setCountry] = useState("");
+console.log(category);
   // const { chain } = useNetwork()
 
   //@dev wagmi function 
@@ -26,35 +28,46 @@ const Modal = () => {
       gasLimit: BigNumber.from(1000000),
     },
     abi: [
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "_price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "_name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "_description",
-            "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_image",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "createTrade"
-      },
+     	{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_category",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_country",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_image",
+						"type": "string"
+					}
+				],
+				"name": "createTrade",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
     ],
-    args: [ethers.BigNumber.from(price), name, desc, tokenURI],
+    args: [ethers.BigNumber.from(price), name, desc,category, country, tokenURI],
     functionName: "createTrade",
     onError(err) {
       console.log("error", err)
@@ -153,16 +166,20 @@ const progressCallback = (progressData: ProgressData) => {
                       <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
                       <input defaultValue={price} onChange={(e) => setPrice(+e.target.value)} type="number" name="price" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999" />
                     </div>
-                    {/* <div>
+                    <div>
                       <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-                      <select id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                      <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                         <option defaultValue="">Select category</option>
-                        <option value="TV">TV/Monitors</option>
+                        <option  value="TV/Monitors">TV/Monitors</option>
                         <option value="PC">PC</option>
-                        <option value="GA">Gaming/Console</option>
-                        <option value="PH">Phones</option>
+                        <option value="Gaming/Console">Gaming/Console</option>
+                        <option  value="Phones">Phones</option>
                       </select>
-                    </div> */}
+                    </div>
+                     <div>
+                      <label htmlFor="Country" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country</label>
+                      <input defaultValue={"brasil"} onChange={(e) => setCountry(e.target.value)} type="text" name="Country" id="price" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="France" />
+                    </div>
                     <div className="sm:col-span-2">
                       <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                       <textarea defaultValue={desc} onChange={(e) => setDesc(e.target.value)} id="description" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Write product description here"></textarea>

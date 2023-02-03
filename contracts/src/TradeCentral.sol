@@ -339,9 +339,7 @@ contract TradeCentral is ReentrancyGuard {
         );
         require(bytes(_country).length <= 30, "Max 30 characters for country");
 
-        if (bytes(_image).length == 0) {
-            _image = "";
-        }
+     
 
         // create SEO friendly name, category and country, no special characters, we store the original name, category and country in the mapping
         string memory _clean_name = normalizeString(_name);

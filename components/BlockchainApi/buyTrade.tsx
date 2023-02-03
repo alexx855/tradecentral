@@ -8,7 +8,7 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const BuyTrade = ({ id, price, seller }: TradeProps) => {
   const { address, isConnected } = useAccount();
-
+  console.log(price)
   const { config } = usePrepareContractWrite({
     address: CONTRACT_ADDRESS,
     chainId: +CHAIN_ID!,
@@ -46,7 +46,7 @@ const BuyTrade = ({ id, price, seller }: TradeProps) => {
   // if (isError) {
   return (
     <button
-      disabled={!write || !isConnected || isLoading}
+      // disabled={!isConnected || isLoading}
       onClick={() => write?.()}
       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
     >
