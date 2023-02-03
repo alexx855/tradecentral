@@ -15,7 +15,6 @@ const Modal = () => {
   const [desc, setDesc] = useState("desc");
   const [category, setCategory] = useState("category");
   const [country, setCountry] = useState("");
-console.log(category);
   // const { chain } = useNetwork()
 
   //@dev wagmi function 
