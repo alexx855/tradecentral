@@ -40,8 +40,8 @@ async function main() {
 
   // print the total users on the contract
   const contractWithDeployerWallet = TradeCentral.connect(deployerWallet);
-  const totalTrades = await contractWithDeployerWallet.currentTrade();
-  const totalUsers = await contractWithDeployerWallet.currentUser();
+  const totalTrades = await contractWithDeployerWallet.getTotalTrades();
+  const totalUsers = await contractWithDeployerWallet.getTotalUsers();
   console.log(`Total trades on the contract: ${totalTrades}`);
   console.log(`Total users on the contract: ${totalUsers}`);
 
@@ -53,20 +53,20 @@ async function main() {
       // const userExists = await TradeCentral.userExists(userWallet.address);
       // console.log(`User ${user.name} with email ${user.email} exists: ${userExists}`);
       // if (userExists) continue;
-      const tx = await contractWithWallet['createUser(string,string)'](user.ema il, user.name);
+      const tx = await contractWithWallet.createUser(user.email, user.name, "");
       const receipt = await tx.wait();
       console.log(`User ${user.name} created with email ${user.email} at block ${receipt.blockNumber}`);
     }
   }
 
-  if (totalTrades.isZero()) {
+  // if (totalTrades.isZero()) {
     // Create a new trades for each user
     let tradesToCreate = 2;
     for (const userWallet of usersWallets) {
       tradesToCreate++;
       const contractWithWallet = TradeCentral.connect(userWallet);
       for (let i = 0; i < tradesToCreate; i++) {
-        const tx = await contractWithWallet['createTrade(uint256,string,string,string,string,string)'](
+        const tx = await contractWithWallet.createTrade(
           ethers.utils.parseEther(`0.00${randNumber({ min: 1, max: 99 })}`),
           randProductName(),
           `${randProductDescription()}`,
@@ -79,7 +79,7 @@ async function main() {
         console.log(`Trade for user #${tradesToCreate} created at block ${receipt.blockNumber}`);
       }
     }
-  }
+  // }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
