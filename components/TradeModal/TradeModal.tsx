@@ -42,28 +42,6 @@ const Modal = () => {
             "internalType": "string",
             "name": "_description",
             "type": "string"
-          }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "name": "createTrade"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "_price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "_name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "_description",
-            "type": "string"
             },
             {
               "internalType": "string",
