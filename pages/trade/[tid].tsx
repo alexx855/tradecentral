@@ -7,12 +7,14 @@ const TradeSingleNoSSR = dynamic(() => import('../../components/BlockchainApi/tr
   ssr: false,
 })
 
+const REVIEWS_FLAG = false;
+
 const TradePage: NextPageWithLayout<{ tid: number; }> = (props) => (
   <section className="p-8">
     <TradeSingleNoSSR {...props} />
 
     {/* TODO: create reviews/messages component */}
-    <>
+    {REVIEWS_FLAG && (<>
       <div className="">
         <figure className="w-full mt-4 border-b-4 r border-gray-200 dark:border-gray-700 pb-4 mb-4">
           {/* TODO: only who brought can review */}
@@ -52,7 +54,7 @@ const TradePage: NextPageWithLayout<{ tid: number; }> = (props) => (
           </button>
         </div>
       </form>
-    </>
+    </>)}
 
   </section>
 )
