@@ -2,59 +2,10 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract TradeCentral is ReentrancyGuard {
     //@dev global variables
     address public owner;
-
-    using Counters for Counters.Counter;
-
-    // trades counter, track the number of elements in a mapping, and provide a way to iterate over them
-    Counters.Counter private _trades_counter;
-
-    function currentTrade() public view returns (uint256) {
-        return _trades_counter.current();
-    }
-
-    function incrementTrade() public {
-        _trades_counter.increment();
-    }
-
-    function decrementTrade() public {
-        _trades_counter.decrement();
-    }
-
-    function resetTrade() public {
-        _trades_counter.reset();
-    }
-
-    // users counter, track the number of elements in a mapping, and provide a way to iterate over them
-    Counters.Counter private _users_counter;
-
-    function currentUser() public view returns (uint256) {
-        return _users_counter.current();
-    }
-
-    function incrementUser() public {
-        _users_counter.increment();
-    }
-
-    function decrementUser() public {
-        _users_counter.decrement();
-    }
-
-    function resetUser() public {
-        _users_counter.reset();
-    }
-
-    function getTotalTrades() public view returns (uint256) {
-        return currentTrade();
-    }
-
-    function getTotalUsers() public view returns (uint256) {
-        return currentUser();
-    }
 
     struct userData {
         string email;
@@ -62,8 +13,11 @@ contract TradeCentral is ReentrancyGuard {
         string image;
     }
 
-    //@dev structs
-    struct Trade {
+    mapping(address => userData) public usersMap;
+    address[] public users;
+
+    // trade structs
+    struct TradeData {
         uint256 id;
         address buyer;
         address seller;
@@ -75,15 +29,23 @@ contract TradeCentral is ReentrancyGuard {
         string[] country;
         bool isSold;
     }
-
-    mapping(address => userData) public users;
-    mapping(uint256 => Trade) public trades;
+    uint256 public tradeCount = 0;
+    mapping(uint256 => TradeData) public tradesMap;
+    // store the trade ids for each name, category and country
     mapping(bytes32 => uint256[]) public nameToTradeId;
     string[] public names;
     mapping(bytes32 => uint256[]) public categoryToTradeIds;
     string[] public categories;
     mapping(bytes32 => uint256[]) public countryToTradeIds;
     string[] public countries;
+
+    function getTotalTrades() public view returns (uint256) {
+        return tradeCount;
+    }
+
+    function getTotalUsers() public view returns (uint256) {
+        return users.length;
+    }
 
     function getTradesByName(string memory _name)
         public
@@ -109,96 +71,8 @@ contract TradeCentral is ReentrancyGuard {
         return countryToTradeIds[keccak256(abi.encodePacked(_country))];
     }
 
-    function getTradesByCountryAndCategory(
-        string memory _country,
-        string memory _category
-    ) public view returns (uint256[] memory) {
-        require(
-            keccak256(abi.encodePacked(_country)) !=
-                keccak256(abi.encodePacked("")),
-            "Country cannot be empty"
-        );
-        require(
-            keccak256(abi.encodePacked(_category)) !=
-                keccak256(abi.encodePacked("")),
-            "Category cannot be empty"
-        );
-        uint256[] memory categoryTrades = getTradesByCategory(_category);
-        uint256[] memory countryTrades = getTradesByCountry(_country);
-        uint256[] memory result = new uint256[](categoryTrades.length);
-        uint256 index = 0;
-        for (uint256 i = 0; i < categoryTrades.length; i++) {
-            for (uint256 j = 0; j < countryTrades.length; j++) {
-                if (categoryTrades[i] == countryTrades[j]) {
-                    result[index] = categoryTrades[i];
-                    index++;
-                }
-            }
-        }
-        return result;
-    }
-
-    function getTradesByCountryAndName(
-        string memory _country,
-        string memory _name
-    ) public view returns (uint256[] memory) {
-        require(
-            keccak256(abi.encodePacked(_name)) !=
-                keccak256(abi.encodePacked("")),
-            "Name cannot be empty"
-        );
-
-        require(
-            keccak256(abi.encodePacked(_country)) !=
-                keccak256(abi.encodePacked("")),
-            "Country cannot be empty"
-        );
-        uint256[] memory nameTrades = getTradesByName(_name);
-        uint256[] memory countryTrades = getTradesByCountry(_country);
-        uint256[] memory result = new uint256[](nameTrades.length);
-        uint256 index = 0;
-        for (uint256 i = 0; i < nameTrades.length; i++) {
-            for (uint256 j = 0; j < countryTrades.length; j++) {
-                if (nameTrades[i] == countryTrades[j]) {
-                    result[index] = nameTrades[i];
-                    index++;
-                }
-            }
-        }
-        return result;
-    }
-
-    function getTradesByCategoryAndName(
-        string memory _category,
-        string memory _name
-    ) public view returns (uint256[] memory) {
-        require(
-            keccak256(abi.encodePacked(_name)) !=
-                keccak256(abi.encodePacked("")),
-            "Name cannot be empty"
-        );
-        require(
-            keccak256(abi.encodePacked(_category)) !=
-                keccak256(abi.encodePacked("")),
-            "Category cannot be empty"
-        );
-        uint256[] memory nameTrades = getTradesByName(_name);
-        uint256[] memory categoryTrades = getTradesByCategory(_category);
-        uint256[] memory result = new uint256[](nameTrades.length);
-        uint256 index = 0;
-        for (uint256 i = 0; i < nameTrades.length; i++) {
-            for (uint256 j = 0; j < categoryTrades.length; j++) {
-                if (nameTrades[i] == categoryTrades[j]) {
-                    result[index] = nameTrades[i];
-                    index++;
-                }
-            }
-        }
-        return result;
-    }
-
-    // function that returns and array of the names of all countries, and the serialized name in the same index
-    function getCountries() public view returns  ( string[][] memory ) {
+    // function that returns and array of the names of all countries, and the serialized name in the same array
+    function getCountries() public view returns (string[][] memory) {
         string[][] memory result = new string[][](countries.length);
         if (countries.length == 0) {
             return result;
@@ -207,7 +81,9 @@ contract TradeCentral is ReentrancyGuard {
         for (uint256 i = 0; i < countries.length; i++) {
             result[i] = new string[](2);
             result[i][0] = countries[i];
-            result[i][1] = trades[ countryToTradeIds[keccak256(abi.encodePacked(countries[i]))][0] ].country[1];
+            result[i][1] = tradesMap[
+                countryToTradeIds[keccak256(abi.encodePacked(countries[i]))][0]
+            ].country[1];
         }
         return result;
     }
@@ -221,31 +97,39 @@ contract TradeCentral is ReentrancyGuard {
         for (uint256 i = 0; i < categories.length; i++) {
             result[i] = new string[](2);
             result[i][0] = categories[i];
-            result[i][1] = trades[ categoryToTradeIds[keccak256(abi.encodePacked(categories[i]))][0] ].category[1];
+            result[i][1] = tradesMap[
+                categoryToTradeIds[keccak256(abi.encodePacked(categories[i]))][
+                    0
+                ]
+            ].category[1];
         }
         return result;
     }
 
-    
+    function getSearchTerm( string memory _term) public view returns (string memory) {
+        // this will try to guess what the user is searching for, and return the real name, category or country
+        bytes32 termHash = keccak256(abi.encodePacked(_term));
 
-    function stringArrayFromBytes32Array(bytes32[] memory arr)
-        private
-        pure
-        returns (string[] memory)
-    {
-        string[] memory result = new string[](arr.length);
-        for (uint256 i = 0; i < arr.length; i++) {
-            result[i] = bytes32ToString(arr[i]);
+        if ( categoryToTradeIds[termHash].length > 0) {
+            return tradesMap[
+                categoryToTradeIds[termHash][0]
+            ].category[1];
         }
-        return result;
-    }
 
-    function bytes32ToString(bytes32 x) private pure returns (string memory) {
-        bytes memory bytesString = new bytes(32);
-        for (uint256 i = 0; i < 32; i++) {
-            bytesString[i] = x[i];
+        if ( countryToTradeIds[termHash].length > 0) {
+            return tradesMap[
+                countryToTradeIds[termHash][0]
+            ].country[1];
         }
-        return string(bytesString);
+
+        if ( nameToTradeId[termHash].length > 0) {
+            return tradesMap[
+                nameToTradeId[termHash][0]
+            ].name[1];
+        }
+
+        // if we get here, we didn't find anything, so return the original term
+        return _term;
     }
 
     function searchTrades(
@@ -253,59 +137,84 @@ contract TradeCentral is ReentrancyGuard {
         string memory _category,
         string memory _name
     ) public view returns (uint256[] memory) {
+        // if country is not empty, start with country
+        uint256[] memory results;
         if (bytes(_country).length > 0) {
-            if (bytes(_category).length > 0) {
-                if (bytes(_name).length > 0) {
-                    return getTradesByAll(_name, _category, _country);
-                } else {
-                    return getTradesByCountryAndCategory(_country, _category);
+            results = getTradesByCountry(_country);
+        }
+        if (bytes(_category).length > 0) {
+            uint256[] memory categoryResults = getTradesByCategory(_category);
+            // if country is not empty, get the intersection of the two
+            if (bytes(_country).length > 0) {
+                uint256[] memory temp = new uint256[](results.length);
+                uint256 count = 0;
+                for (uint256 i = 0; i < results.length; i++) {
+                    for (uint256 j = 0; j < categoryResults.length; j++) {
+                        if (results[i] == categoryResults[j]) {
+                            temp[count] = results[i];
+                            count++;
+                        }
+                    }
+                }
+                results = new uint256[](count);
+                for (uint256 i = 0; i < count; i++) {
+                    results[i] = temp[i];
                 }
             } else {
-                if (bytes(_name).length > 0) {
-                    return getTradesByCountryAndName(_country, _name);
-                } else {
-                    return getTradesByCountry(_country);
-                }
-            }
-        } else {
-            if (bytes(_category).length > 0) {
-                if (bytes(_name).length > 0) {
-                    return getTradesByCategoryAndName(_name, _category);
-                } else {
-                    return getTradesByCategory(_category);
-                }
-            } else {
-                if (bytes(_name).length > 0) {
-                    return getTradesByName(_name);
-                } else {
-                    return new uint256[](0);
-                }
+                results = categoryResults;
             }
         }
+        if (bytes(_name).length > 0) {
+            // get the results from name, if there are any results from country or category, get the intersection
+            uint256[] memory nameResults = getTradesByName(_name);
+            if (results.length > 0) {
+                uint256[] memory temp = new uint256[](results.length);
+                uint256 count = 0;
+                for (uint256 i = 0; i < results.length; i++) {
+                    for (uint256 j = 0; j < nameResults.length; j++) {
+                        if (results[i] == nameResults[j]) {
+                            temp[count] = results[i];
+                            count++;
+                        }
+                    }
+                }
+                results = new uint256[](count);
+                for (uint256 i = 0; i < count; i++) {
+                    results[i] = temp[i];
+                }
+            } else {
+                results = nameResults;
+            }
+        }
+
+        if (results.length > 0) {
+            return results;
+        }
+        return new uint256[](0);
     }
 
     function getTradesByIds(uint256[] memory ids)
         public
         view
-        returns (Trade[] memory)
+        returns (TradeData[] memory)
     {
         require(ids.length > 0, "Invalid ids");
-        Trade[] memory result = new Trade[](ids.length);
+        TradeData[] memory result = new TradeData[](ids.length);
         for (uint256 i = 0; i < ids.length; i++) {
-            if (trades[ids[i]].id == 0) {
+            if (tradesMap[ids[i]].id == 0) {
                 revert("Invalid id");
             }
-            result[i] = trades[ids[i]];
+            result[i] = tradesMap[ids[i]];
         }
         return result;
     }
 
-    // @dev function to get all trades results from search
+    // @dev function to get all tradesMap results from search
     function searchTradesByAll(
         string memory _country,
         string memory _category,
         string memory _name
-    ) public view returns (Trade[] memory) {
+    ) public view returns (TradeData[] memory) {
         require(
             bytes(_country).length > 0 ||
                 bytes(_category).length > 0 ||
@@ -314,38 +223,9 @@ contract TradeCentral is ReentrancyGuard {
         );
         uint256[] memory ids = searchTrades(_country, _category, _name);
         if (ids.length == 0) {
-            return new Trade[](0);
+            return new TradeData[](0);
         }
         return getTradesByIds(ids);
-    }
-
-    function getTradesByAll(
-        string memory _name,
-        string memory _category,
-        string memory _country
-    ) public view returns (uint256[] memory) {
-        bytes32 name = keccak256(abi.encodePacked(_name));
-        bytes32 category = keccak256(abi.encodePacked(_category));
-        bytes32 country = keccak256(abi.encodePacked(_country));
-        uint256[] memory nameTrades = nameToTradeId[name];
-        uint256[] memory categoryTrades = categoryToTradeIds[category];
-        uint256[] memory countryTrades = countryToTradeIds[country];
-        uint256[] memory result = new uint256[](nameTrades.length);
-        uint256 index = 0;
-        for (uint256 i = 0; i < nameTrades.length; i++) {
-            for (uint256 j = 0; j < categoryTrades.length; j++) {
-                for (uint256 k = 0; k < countryTrades.length; k++) {
-                    if (
-                        nameTrades[i] == categoryTrades[j] &&
-                        nameTrades[i] == countryTrades[k]
-                    ) {
-                        result[index] = nameTrades[i];
-                        index++;
-                    }
-                }
-            }
-        }
-        return result;
     }
 
     //@dev constructor
@@ -357,26 +237,23 @@ contract TradeCentral is ReentrancyGuard {
     function createUser(
         string memory _email,
         string memory _name,
-        string memory image
+        string memory _image
     ) external nonReentrant {
         require(msg.sender != address(0), "Invalid address");
         require(bytes(_email).length > 0, "Invalid email");
         require(bytes(_name).length > 0, "Invalid name");
-        require(bytes(image).length > 0, "Invalid image");
-        users[msg.sender] = userData(_email, _name, image);
-        incrementUser();
-    }
 
-    // create user without image
-    function createUser(string memory _email, string memory _name)
-        external
-        nonReentrant
-    {
-        require(msg.sender != address(0), "Invalid address");
-        require(bytes(_email).length > 0, "Invalid email");
-        require(bytes(_name).length > 0, "Invalid name");
-        users[msg.sender] = userData(_email, _name, "");
-        incrementUser();
+        if (bytes(usersMap[msg.sender].email).length > 0) {
+            revert("User already exists");
+        }
+
+        // use a placeholder image hash by default
+        if (bytes(_image).length == 0) {
+            _image = "placeholder";
+        }
+
+        usersMap[msg.sender] = userData(_email, _name, _image);
+        users.push(msg.sender);
     }
 
     function normalizeString(string memory input)
@@ -407,7 +284,35 @@ contract TradeCentral is ReentrancyGuard {
             }
         }
 
-        return string(output);
+        uint256 count = 0;
+        // remove starting and ending dashes, and double dashes
+        for (uint256 i = 0; i < bytes(output).length; i++) {
+            if (
+                (bytes(output)[i] == 0x2D && i == 0) ||
+                (bytes(output)[i] == 0x2D && bytes(output)[i - 1] == 0x2D) ||
+                (bytes(output)[i] == 0x2D && i == bytes(output).length)
+            ) {
+                count++;
+            }
+        }
+        bytes memory temp = new bytes(bytes(output).length - count);
+        // copy the array characteres to a new one without the dashes
+        uint256 j = 0;
+        for (uint256 i = 0; i < bytes(output).length; i++) {
+            if (
+                (bytes(output)[i] == 0x2D && i == 0) ||
+                (bytes(output)[i] == 0x2D && bytes(output)[i - 1] == 0x2D) ||
+                (bytes(output)[i] == 0x2D && i == bytes(output).length)
+            ) {
+                continue;
+            } else {
+                temp[j] = bytes(output)[i];
+                j++;
+            }
+        }
+        return string(temp);
+
+        // return string(output);
     }
 
     //@dev function create one trade
@@ -429,17 +334,15 @@ contract TradeCentral is ReentrancyGuard {
         // the name is max 120 characters
         require(bytes(_name).length <= 120, "Max 120 characters for name");
         require(
-            bytes(_category).length <= 20,
-            "Max 20 characters for category"
+            bytes(_category).length <= 30,
+            "Max 30 characters for category"
         );
-        require(bytes(_country).length <= 20, "Max 20 characters for country");
+        require(bytes(_country).length <= 30, "Max 30 characters for country");
 
         if (bytes(_image).length == 0) {
-            _image = "placeholderhash";
+            _image = "";
         }
 
-        incrementTrade();
-        uint256 _tradeId = currentTrade();
         // create SEO friendly name, category and country, no special characters, we store the original name, category and country in the mapping
         string memory _clean_name = normalizeString(_name);
         string memory _clean_category = normalizeString(_category);
@@ -454,7 +357,9 @@ contract TradeCentral is ReentrancyGuard {
         _indexed_country[0] = _clean_country;
         _indexed_country[1] = _country;
 
-        trades[_tradeId] = Trade(
+        tradeCount++;
+        uint256 _tradeId = tradeCount;
+        tradesMap[_tradeId] = TradeData(
             _tradeId,
             address(0),
             msg.sender,
@@ -466,7 +371,6 @@ contract TradeCentral is ReentrancyGuard {
             _indexed_country,
             false
         );
-
 
         nameToTradeId[keccak256(abi.encodePacked(_clean_name))].push(_tradeId);
         if (
@@ -501,16 +405,19 @@ contract TradeCentral is ReentrancyGuard {
         string memory _image
     ) external nonReentrant {
         require(
-            bytes(users[msg.sender].email).length > 0,
+            bytes(usersMap[msg.sender].email).length > 0,
             "User does not exist"
         );
         require(msg.sender != address(0), "Invalid address");
         require(bytes(_email).length > 0, "Invalid email");
         require(bytes(_name).length > 0, "Invalid name");
-        require(bytes(_image).length > 0, "Invalid image");
-        users[msg.sender].email = _email;
-        users[msg.sender].name = _name;
-        users[msg.sender].image = _image;
+        if (bytes(_image).length == 0) {
+            _image = "";
+        }
+
+        usersMap[msg.sender].email = _email;
+        usersMap[msg.sender].name = _name;
+        usersMap[msg.sender].image = _image;
     }
 
     // update profile without image
@@ -519,84 +426,86 @@ contract TradeCentral is ReentrancyGuard {
         nonReentrant
     {
         require(
-            bytes(users[msg.sender].email).length > 0,
+            bytes(usersMap[msg.sender].email).length > 0,
             "User does not exist"
         );
         require(msg.sender != address(0), "Invalid address");
         require(bytes(_email).length > 0, "Invalid email");
         require(bytes(_name).length > 0, "Invalid name");
-        users[msg.sender].email = _email;
-        users[msg.sender].name = _name;
+        usersMap[msg.sender].email = _email;
+        usersMap[msg.sender].name = _name;
     }
 
-    //@dev function for look trades in the market by id
-    function lookTrades(uint256 _itemId) public view returns (Trade memory) {
+    //@dev function for look tradesMap in the market by id
+    function lookTrades(uint256 _itemId)
+        public
+        view
+        returns (TradeData memory)
+    {
         // validate that trade exists
-        require(trades[_itemId].id > 0, "Trade does not exist");
-        Trade storage _trade = trades[_itemId];
+        require(_itemId > 0 && _itemId <= tradeCount, "Trade does not exist");
+        TradeData storage _trade = tradesMap[_itemId];
         return _trade;
     }
 
-    // @dev function for look all open trades in the market
-    function lookAllTrades() public view returns (Trade[] memory) {
+    // @dev function for look all open tradesMap in the market
+    function lookAllTrades() public view returns (TradeData[] memory) {
         // validate that trade exists, if not return empty array
-        if (currentTrade() == 0) {
-            return new Trade[](0);
+        if (tradeCount == 0) {
+            return new TradeData[](0);
         }
 
-        Trade[] memory _trades = new Trade[](currentTrade());
+        TradeData[] memory _tradesMap = new TradeData[](tradeCount);
         uint256 index = 0;
-        for (uint256 i = 1; i <= currentTrade(); i++) {
-            if (trades[i].isSold == false) {
-                _trades[index] = trades[i];
+        for (uint256 i = 1; i <= tradeCount; i++) {
+            if (tradesMap[i].isSold == false) {
+                _tradesMap[index] = tradesMap[i];
                 index++;
             }
         }
-        return _trades;
+        return _tradesMap;
     }
 
     // @dev function for look by user
-    // TODO: use a mapping to store the trades by user address
     function lookAllTrades(address _userAddress)
         public
         view
-        returns (Trade[] memory)
+        returns (TradeData[] memory)
     {
         require(_userAddress != address(0), "Invalid address");
-        // get the total of trades for the user address
-        uint256 currentTradeCount = currentTrade();
+        // get the total of tradesMap for the user address
         uint256 total = 0;
-        for (uint256 i = 1; i <= currentTradeCount; i++) {
-            if (trades[i].seller == _userAddress) {
+        for (uint256 i = 1; i <= tradeCount; i++) {
+            if (tradesMap[i].seller == _userAddress) {
                 total++;
             }
         }
 
         if (total == 0) {
-            return new Trade[](0);
+            return new TradeData[](0);
         }
 
-        Trade[] memory _trades = new Trade[](total);
+        TradeData[] memory _tradesMap = new TradeData[](total);
         uint256 index = 0;
-        for (uint256 i = 1; i <= currentTradeCount; i++) {
-            if (trades[i].seller == _userAddress) {
-                _trades[index] = trades[i];
+        for (uint256 i = 1; i <= tradeCount; i++) {
+            if (tradesMap[i].seller == _userAddress) {
+                _tradesMap[index] = tradesMap[i];
                 index++;
             }
         }
 
-        return _trades;
+        return _tradesMap;
     }
 
-    // @dev function that returns the total  of trades of a user
+    // @dev function that returns the total  of tradesMap of a user
     function totalTradesByUser(address _userAddress)
         public
         view
         returns (uint256)
     {
         uint256 total = 0;
-        for (uint256 i = 1; i <= currentTrade(); i++) {
-            if (trades[i].seller == _userAddress) {
+        for (uint256 i = 1; i <= tradeCount; i++) {
+            if (tradesMap[i].seller == _userAddress) {
                 total++;
             }
         }
@@ -605,14 +514,14 @@ contract TradeCentral is ReentrancyGuard {
 
     //@dev function that checks if the user exists
     function userExists(address _userAddress) public view returns (bool) {
-        if (bytes(users[_userAddress].email).length > 0) {
+        if (bytes(usersMap[_userAddress].email).length > 0) {
             return true;
         } else {
             return false;
         }
     }
 
-    //@dev function for look users in the market
+    //@dev function for look usersMap in the market
     function lookUsers(address _userAddress)
         public
         view
@@ -620,51 +529,42 @@ contract TradeCentral is ReentrancyGuard {
     {
         // validate that user exists
         require(
-            bytes(users[_userAddress].email).length > 0,
+            bytes(usersMap[_userAddress].email).length > 0,
             "User does not exist"
         );
-        userData storage _user = users[_userAddress];
+        userData storage _user = usersMap[_userAddress];
         return _user;
     }
 
     //@dev function for buy one trade
     function buyTrade(uint256 _itemId) public payable nonReentrant {
-        require(msg.value == trades[_itemId].price, "Invalid value");
-        require(trades[_itemId].isSold == false, "Invalid trade, item sold");
-        require(trades[_itemId].seller != address(0), "Invalid seller");
-        require(trades[_itemId].seller != msg.sender, "Invalid seller");
-        trades[_itemId].buyer = msg.sender;
-        // payable(trades[_itemId].seller).transfer(msg.value);
-        // delete trades[_itemId];
-        // decrementTrade();
+        require(msg.value == tradesMap[_itemId].price, "Invalid value");
+        require(tradesMap[_itemId].isSold == false, "Invalid trade, item sold");
+        require(tradesMap[_itemId].seller != address(0), "Invalid seller");
+        require(tradesMap[_itemId].seller != msg.sender, "Invalid seller");
+        tradesMap[_itemId].buyer = msg.sender;
+        // payable(tradesMap[_itemId].seller).transfer(msg.value);
+        // delete tradesMap[_itemId];
+        // tradeCount--;
     }
-  //@dev function for set in true the isSold
-    function staking(uint256 _itemId) public nonReentrant{
-        require(trades[_itemId].isSold == false, "Invalid trade, item sold");
-        require(trades[_itemId].seller == msg.sender, "Invalid seller");
-        trades[_itemId].isSold = true; 
-        payable(trades[_itemId].seller).transfer(trades[_itemId].price);
-        delete trades[_itemId];
-        decrementTrade();
+
+    //@dev function for set in true the isSold
+    function staking(uint256 _itemId) public nonReentrant {
+        require(tradesMap[_itemId].isSold == false, "Invalid trade, item sold");
+        require(tradesMap[_itemId].seller == msg.sender, "Invalid seller");
+        tradesMap[_itemId].isSold = true;
+        payable(tradesMap[_itemId].seller).transfer(tradesMap[_itemId].price);
+        delete tradesMap[_itemId];
+        tradeCount--;
     }
+
     //@dev function for cancel one trade
     function cancelTrade(uint256 _itemId) public nonReentrant {
         require(msg.sender != address(0), "Invalid address");
-        require(trades[_itemId].isSold == false, "Invalid trade, item sold");
-        require(trades[_itemId].seller != address(0), "Invalid seller");
-        require(trades[_itemId].seller == msg.sender, "Invalid seller");
-        delete trades[_itemId];
-        decrementTrade();
-    }
-
-    //@dev function for withdraw one trade
-    function cancelAllTrades() public nonReentrant {
-        require(msg.sender != address(0), "Invalid address");
-        for (uint256 i = 1; i <= currentTrade(); i++) {
-            if (trades[i].seller == msg.sender) {
-                delete trades[i];
-                decrementTrade();
-            }
-        }
+        require(tradesMap[_itemId].isSold == false, "Invalid trade, item sold");
+        require(tradesMap[_itemId].seller != address(0), "Invalid address");
+        require(tradesMap[_itemId].seller == msg.sender, "Invalid seller");
+        delete tradesMap[_itemId];
+        tradeCount--;
     }
 }

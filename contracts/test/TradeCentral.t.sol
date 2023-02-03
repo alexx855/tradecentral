@@ -20,9 +20,9 @@ contract TradeCentralTest is Test {
         // create user
         string memory _email = "mails@alexpedersen.dev";
         string memory _name = "Alex Pedersen";
-        string memory image = "NoImage";
+        string memory image = "";
         // get user address
-        address userAddress = vm.addr(1);
+        address userAddress = vm.addr(uint256(uint160(alex)));
         vm.prank(userAddress);
         trade.createUser(_email, _name, image);
         // asset user lookup
@@ -46,22 +46,19 @@ contract TradeCentralTest is Test {
     function testUpdateProfile() public {
         // create user
         testCreateUser();
-
         // update user
         string memory _email = "nuevo@alexpedersen.dev";
         string memory _name = "alexx855.eth";
-        string memory image = "ImageHash";
-
+        string memory image = "";
         // prank the user address
         address userAddress = vm.addr(1);
         vm.prank(userAddress);
         trade.updateProfile(_email, _name, image);
-
         // asset user data
         TradeCentral.userData memory user = trade.lookUsers(userAddress);
         assertEq(user.email, _email);
         assertEq(user.name, _name);
-        assertEq(user.image, image);
+        assertEq(user.image, "");
     }
 
     function createTrade() public {
@@ -73,7 +70,14 @@ contract TradeCentralTest is Test {
         string memory _image = "";
         address userAddress = vm.addr(1);
         vm.prank(userAddress);
-        trade.createTrade(_price, _name, _description, _category, _cuntry, _image);
+        trade.createTrade(
+            _price,
+            _name,
+            _description,
+            _category,
+            _cuntry,
+            _image
+        );
     }
 
     function testCreateTrade() public {
@@ -82,36 +86,29 @@ contract TradeCentralTest is Test {
         assertEq(trade.getTotalTrades(), 1);
     }
 
-    // function testCancelTrade() public {
-    //     // create trade
-    //     createTrade();
-    //     // assert trade count
-    //     assertEq(trade.getTotalTrades(), 1);
-    //     // cancel trade
-    //     trade.cancelTrade(1);
-    //     // assert trade, it shouldnt exist anymore and should be reverted
-    //     vm.expectRevert("Trade does not exist");
-    //     trade.lookTrades(1);
-    //     // assert trade count
-    //     assertEq(trade.getTotalTrades(), 0);
-    // }
-
-    // function testCancelAllTrades() public {
-    //     // create trade
-    //     createTrade();
-    //     createTrade();
-    //     createTrade();
-    //     // assert trade count
-    //     assertEq(trade.getTotalTrades(), 3);
-    //     // cancel all trades
-    //     trade.cancelAllTrades();
-    //     // assert trade count
-    //     assertEq(trade.getTotalTrades(), 0);
-    // }
+    function testCancelTrade() public {
+        // create trade
+        createTrade();
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 1);
+        // cancel trade that is not yours, should revert
+        vm.expectRevert("Invalid seller");
+        trade.cancelTrade(1);
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 1);
+        // cancel test create
+        vm.prank(vm.addr(1));
+        trade.cancelTrade(1);
+        // assert trade, it shouldnt exist anymore and should be reverted
+        vm.expectRevert("Trade does not exist");
+        trade.lookTrades(1);
+        // assert trade count
+        assertEq(trade.getTotalTrades(), 0);
+    }
 
     function testLookAllTrades() public {
-       // look all trades
-        TradeCentral.Trade[] memory noTrades = trade.lookAllTrades();
+        // look all trades
+        TradeCentral.TradeData[] memory noTrades = trade.lookAllTrades();
         // assert trade count
         assertEq(noTrades.length, 0);
         // create trade
@@ -119,10 +116,9 @@ contract TradeCentralTest is Test {
         // assert trade count
         assertEq(trade.getTotalTrades(), 1);
         // look all trades
-        TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
+        TradeCentral.TradeData[] memory allTrades = trade.lookAllTrades();
         // assert trade count
         assertEq(allTrades.length, 1);
-
         // assert trade seller
         assertEq(allTrades[0].seller, vm.addr(1));
     }
@@ -134,20 +130,15 @@ contract TradeCentralTest is Test {
         createTrade();
         // assert trade count
         assertEq(trade.getTotalTrades(), 1);
-
-        // address userAddress2 = vm.addr(2);
         vm.prank(_address);
         trade.createTrade(100, "test", "test", "test", "test", "");
-        TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
+        TradeCentral.TradeData[] memory allTrades = trade.lookAllTrades();
         // assert trade count, 1 from addr(1) and 1 from addr(2)
         assertEq(allTrades.length, 2);
         assertEq(allTrades[0].seller, vm.addr(1));
         assertEq(allTrades[1].seller, _address);
-
-        // emit log_named_address("userAddress2", _address);
-
         // look user trades for _address only
-        TradeCentral.Trade[] memory userTrades = trade.lookAllTrades(_address);
+        TradeCentral.TradeData[] memory userTrades = trade.lookAllTrades(_address);
         // assert trade count
         assertEq(userTrades.length, 1);
         // assert trade with seller _address
@@ -156,44 +147,122 @@ contract TradeCentralTest is Test {
 
     // test search, by name, category, country
     function testSearch() public {
-        // create test trade
+        // create 2 test trade
         createTrade();
         createTrade();
-        // create trade with data 
-        trade.createTrade(100, "name",  "description", "category", "country", "image");
+        // create trade with data
+        trade.createTrade(
+            100,
+            "name",
+            "description",
+            "category",
+            "country",
+            ""
+        );
+        trade.createTrade(
+            100,
+            "name2",
+            "description",
+            "category2",
+            "country",
+            ""
+        );
         // assert trade count
-        assertEq(trade.getTotalTrades(), 3);
-        // look all trades
-        TradeCentral.Trade[] memory allTrades = trade.lookAllTrades();
-        // assert trade count
-        assertEq(allTrades.length, 3);
+        assertEq(trade.getTotalTrades(), 4);
+
         // search by country
-        TradeCentral.Trade[] memory searchTrades = trade.searchTradesByAll("country", "", "");
+        TradeCentral.TradeData[] memory searchTrades = trade.searchTradesByAll(
+            "country",
+            "",
+            ""
+        );
         // assert trade count
-        assertEq(searchTrades.length, 1);
+        assertEq(searchTrades.length, 2);
+        assertEq(searchTrades[0].country[1], "country");
         // search by country category
-        TradeCentral.Trade[] memory searchTrades2 = trade.searchTradesByAll("country", "category", "");
-        // assert trade count
+        TradeCentral.TradeData[] memory searchTrades2 = trade.searchTradesByAll(
+            "country",
+            "category",
+            ""
+        );
+        
         assertEq(searchTrades2.length, 1);
+        assertEq(searchTrades2[0].country[1], "country");
+        assertEq(searchTrades2[0].category[1], "category");
+
         // search by country category name
-        TradeCentral.Trade[] memory searchTrades3 = trade.searchTradesByAll("country", "category", "name");
+        TradeCentral.TradeData[] memory searchTrades3 = trade.searchTradesByAll(
+            "country",
+            "category",
+            "name"
+        );
+        
         // assert trade count
         assertEq(searchTrades3.length, 1);
+        assertEq(searchTrades3[0].country[1], "country");
+        assertEq(searchTrades3[0].category[1], "category");
+        assertEq(searchTrades3[0].name[1], "name");
+
+        // test by name only
+        TradeCentral.TradeData[] memory searchTrades4 = trade.searchTradesByAll(
+            "",
+            "",
+            "test"
+        );
+        // assert trade count
+        assertEq(searchTrades4.length, 2);
+
+        // test by category only
+        TradeCentral.TradeData[] memory searchTrades5 = trade.searchTradesByAll(
+            "",
+            "test",
+            ""
+        );
+        // assert trade count
+        assertEq(searchTrades5.length, 2);
     }
 
     function testGetIndexedData() public {
         // create test trade
         createTrade();
+        createTrade();
         // create a trade with wierd data and charateres to test the search
-        trade.createTrade(100, "testing",  "description", "category", " -Country 1&  Coun", "image");
+        trade.createTrade(
+            100,
+            "testing",
+            "description",
+            "Health & Beauty",
+            " --County 1&  on",
+            ""
+        );
         // get the countries
         string[][] memory countries = trade.getCountries();
-        // emit log_named_string("country", countries[1]);
         // assert countries count
-        assertEq(countries.length, 2);
-        // assert country name
-        // emit log(countries[]);
-        assertEq(countries[1][0], "--country-1---coun");
-        assertEq(countries[1][1], " -Country 1&  Coun");
+        assertEq(countries.length, 2); // only 1 from the tests (repeated) and 1 from the create
+        // assert country name and generated slug
+        assertEq(countries[1][0], "county-1-on");
+        assertEq(countries[1][1], " --County 1&  on");
+
+        // get the categories
+        string[][] memory categories = trade.getCategories();
+        // assert categories count
+        assertEq(categories.length, 2); 
+        assertEq(categories[1][0], "health-beauty");
+        assertEq(categories[1][1], "Health & Beauty");
+    }
+
+    function testGetSearchTerm() public {
+        trade.createTrade(
+            100,
+            "testing",
+            "description",
+            "Health & Beauty",
+            "Some country name",
+            ""
+        );
+        string memory searchTerm = trade.getSearchTerm("health-beauty");
+        // emit log_string(searchTerm);
+        assertEq(searchTerm, "Health & Beauty");
+
     }
 }
