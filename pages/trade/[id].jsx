@@ -67,7 +67,7 @@ const TradePage = () => {
           {/* Buy CTA */}
           {item.price && (<div className="flex items-center justify-between">
             <span className="text-3xl font-bold text-gray-900 dark:text-white"><FaEthereum />{`${utils.formatUnits(item.price).slice(0, 6)}`}</span>
-            <BuyTrade />
+            <BuyTrade id={item.id} price={item.price} />
           </div>)}
 
           {/* Seller info */}

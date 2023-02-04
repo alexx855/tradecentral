@@ -30,6 +30,8 @@
 ,
 "components/Trade/TradeCard.jsx",
 "pages/trade/[id].jsx"
+,
+"components/User/User.jsx"
 ],
   "exclude": [
     "node_modules",
