@@ -34,6 +34,8 @@
 "components/User/User.jsx"
 ,
 "pages/category/[cid].jsx"
+,
+"pages/country/[cid].jsx"
 ],
   "exclude": [
     "node_modules",
