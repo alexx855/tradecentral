@@ -39,11 +39,16 @@ const TradePage = () => {
   }, []);
 
   console.log(bool)
-  const tradesmap = trades?.filter((item) => {
-    return item.id = itemId;
-  })
-  console.log(tradesmap)
 
+  if (!bool) {
+    return (
+      <div className="px-4 pb-4 w-full  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 justify-items-center ">
+
+        <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">This trade does not exist</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Please check the URL and try again.</p>
+      </div>
+    )
+  }
 
 
   return (

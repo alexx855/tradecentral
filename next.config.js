@@ -4,7 +4,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
   images: {
-    domains: ['gateway.lighthouse.storage'],
+    domains: ['gateway.lighthouse.storage', "i.imgur.com"],
+
   },
 }
 
