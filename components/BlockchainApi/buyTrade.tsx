@@ -45,8 +45,8 @@ console.log(trades, "tradessssdds")
   });
   const { data, isLoading, isSuccess, write, isError } = useContractWrite(config);
 
-  // TODO: do some checks here
-  // if (isError) {
+  if(trades?.filter((trade: any) => trade.isSold === true)) {
+
   return (
     <button
       disabled={!isConnected || isLoading}
@@ -58,7 +58,7 @@ console.log(trades, "tradessssdds")
       ) : isSuccess ? ('Bought') : 'Buy'}
     </button>
   );
-
+  }
 };
 
 export default BuyTrade;

@@ -128,11 +128,11 @@ contract TradeCentral is ReentrancyGuard {
     event TradeCompleted(uint256 _itemId, address _buyer, address _seller, uint256 _price);
 
 
-     function staking(uint256 _itemId) public nonReentrant {
+     function staking(uint256 _itemId) public payable nonReentrant {
         require(trades[_itemId].isSold == true, "Invalid trade");
         require(trades[_itemId].staking == false, "Invalid trade, item sold");
         require(trades[_itemId].seller == msg.sender, "Invalid seller");
-        payable(trades[_itemId].buyer).transfer(trades[_itemId].price);
+        payable(trades[_itemId].seller).transfer(trades[_itemId].price);
         trades[_itemId].staking = true;
         delete trades[_itemId];
         tradeCount--;

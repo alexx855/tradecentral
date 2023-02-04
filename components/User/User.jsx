@@ -5,6 +5,7 @@ import { Address, useAccount, useContractRead } from 'wagmi';
 import Balance from '../BlockchainApi/balance';
 import Cancel from '../BlockchainApi/Cancel';
 import { GetAllItems } from '../BlockchainApi/ListedTokens';
+import Staking from '../BlockchainApi/Staking';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -118,6 +119,7 @@ const User = () => {
             <div key={trade.id} className="items-center justify-center flex flex-col">
               <h1>{trade.name}</h1>
               <Cancel id={trade.id} />
+              <Staking id={trade.id} />
               {trade.image ? (
                 <Image width={40} height={40} className="w-10 h-10 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" src={trade.image} alt={`${trade.name ? trade.name : trimAddress(trade.address)} avatar`} />
               ) : (
