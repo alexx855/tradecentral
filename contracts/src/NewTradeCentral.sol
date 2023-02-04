@@ -19,6 +19,8 @@ contract TradeCentral is ReentrancyGuard {
         string name;
         string description;
         string image;
+        string country;
+        string category;
         bool isSold;
         bool staking;
     }
@@ -65,7 +67,9 @@ contract TradeCentral is ReentrancyGuard {
         uint256 _price,
         string memory _name,
         string memory _description,
-        string memory _image
+        string memory _image, 
+        string memory _country,
+        string memory _category
     ) external nonReentrant {
         require(msg.sender != address(0), "Invalid address");
         require(_price > 0, "Invalid price");
@@ -81,6 +85,8 @@ contract TradeCentral is ReentrancyGuard {
             _name,
             _description,
             _image,
+            _country,
+            _category,
             false,
             false
         );
@@ -117,14 +123,17 @@ contract TradeCentral is ReentrancyGuard {
         require(trades[_itemId].seller != msg.sender, "Invalid seller");
         trades[_itemId].buyer = msg.sender;
         trades[_itemId].isSold = true;
+        emit TradeCompleted(_itemId, trades[_itemId].buyer, trades[_itemId].seller, trades[_itemId].price);
     }
+    event TradeCompleted(uint256 _itemId, address _buyer, address _seller, uint256 _price);
 
 
      function staking(uint256 _itemId) public nonReentrant {
         require(trades[_itemId].isSold == true, "Invalid trade");
-        require(trades[_itemId].staking == true, "Invalid trade, item sold");
+        require(trades[_itemId].staking == false, "Invalid trade, item sold");
         require(trades[_itemId].seller == msg.sender, "Invalid seller");
-        payable(trades[_itemId].seller).transfer(trades[_itemId].price);
+        payable(trades[_itemId].buyer).transfer(trades[_itemId].price);
+        trades[_itemId].staking = true;
         delete trades[_itemId];
         tradeCount--;
         emit StakingComlpeted(_itemId);
@@ -134,19 +143,21 @@ contract TradeCentral is ReentrancyGuard {
     //@dev function for cancel one trade
     function cancelTrade(uint256 _itemId) public nonReentrant {
         require(msg.sender != address(0), "Invalid address");
-        require(trades[_itemId].isSold == false, "Invalid trade, item sold");
         require(trades[_itemId].seller != address(0), "Invalid seller");
         require(trades[_itemId].seller == msg.sender, "Invalid seller");
+        if(trades[_itemId].isSold == true && trades[_itemId].staking == false){
+            payable(trades[_itemId].buyer).transfer(trades[_itemId].price);
+        }
         delete trades[_itemId];
     }
 
-    //@dev function for withdraw one trade
-    function cancelAllTrades() public nonReentrant {
-        require(msg.sender != address(0), "Invalid address");
-        for (uint256 i = 1; i <= tradeCount; i++) {
-            if (trades[i].seller == msg.sender) {
-                delete trades[i];
-            }
-        }
-    }
+    // //@dev function for withdraw one trade
+    // function cancelAllTrades() public nonReentrant {
+    //     require(msg.sender != address(0), "Invalid address");
+    //     for (uint256 i = 1; i <= tradeCount; i++) {
+    //         if (trades[i].seller == msg.sender) {
+    //             delete trades[i];
+    //         }
+    //     }
+    // }
 }
