@@ -2,6 +2,7 @@ import { NextPageWithLayout } from './_app';
 import dynamic from 'next/dynamic';
 import Layout from '../components/Layouts/layout';
 import { ReactElement } from 'react';
+import { GetAllItems } from '../components/BlockchainApi/ListedTokens.jsx';
 
 const TradesListNoSSR = dynamic(() => import('../components/BlockchainApi/listTrades'), {
   ssr: false,
@@ -13,10 +14,14 @@ const ListCountriesNoSSR = dynamic(() => import('../components/BlockchainApi/Lis
   ssr: false,
 })
 
+
+
 interface HomeProps {
 }
 
 const HomePage: NextPageWithLayout = (props: HomeProps) => {
+  const {data, trades} = GetAllItems();
+  console.log(trades);
   return (
     <section>
       <div className="mb-8 text-center">

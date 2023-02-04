@@ -66,7 +66,7 @@ const Modal = () => {
 				"type": "function"
 			},
     ],
-    args: [ethers.BigNumber.from(price), name, desc,category, country, tokenURI],
+    args: [ethers.BigNumber.from(price), name, desc, category, country, tokenURI],
     functionName: "createTrade",
     onError(err) {
       console.log("error", err)

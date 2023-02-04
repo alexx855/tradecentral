@@ -25,6 +25,8 @@
     "**/*.tsx"
 ,
 "components/LightHouse/LighHouse.jsx"
+,
+"components/BlockchainApi/ListedTokens.jsx"
 ],
   "exclude": [
     "node_modules",
