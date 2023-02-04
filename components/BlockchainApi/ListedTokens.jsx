@@ -119,8 +119,8 @@ export function GetAllItems() {
 					name: item[4],
 					desc: item[5],
 					image: item[6],
-					country: item[8],
 					category: item[7],
+					country: item[8],
 					isSold: item[9],
 					staking: item[10],
 				};

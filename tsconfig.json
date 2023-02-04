@@ -32,6 +32,8 @@
 "pages/trade/[id].jsx"
 ,
 "components/User/User.jsx"
+,
+"pages/category/[cid].jsx"
 ],
   "exclude": [
     "node_modules",
