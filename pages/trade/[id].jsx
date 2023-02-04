@@ -7,8 +7,8 @@ import Link from 'next/link';
 import SellerInfo from '../../components/BlockchainApi/SellerInfo';
 import BuyTrade from '../../components/BlockchainApi/buyTrade';
 import Image from 'next/image';
-import { BigNumber, utils } from 'ethers';
-import { FaEthereum } from "react-icons/fa";
+import { BigNumber, ethers, utils } from 'ethers';
+import { FaDollarSign, FaEthereum } from "react-icons/fa";
 // const TradeSingleNoSSR = dynamic(() => import('../../components/BlockchainApi/tradeSingle'), {
 //   ssr: false,
 // })
@@ -42,7 +42,7 @@ const TradePage = () => {
 
   if (!bool) {
     return (
-      <div className="px-4 pb-4 w-full  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 justify-items-center ">
+      <div className="px-4 pb-4 w-6/12  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 justify-items-center ">
 
         <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">This trade does not exist</h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">Please check the URL and try again.</p>
@@ -52,14 +52,13 @@ const TradePage = () => {
 
 
   return (
-    <div className="px-4 pb-4 w-full  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div className="px-4 pb-4 w-6/12  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       {trades?.filter((item) => {
         return item.id === itemId;
       }).map((item) => (
         <>
-          <h1 className="mt-4 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">We invest in the world’s potential</h1>
-          <div className='my-8'>
-            <Image className="rounded-t-lg" width={50} height={50} src={item.image} />
+          <div className='my-8 '>
+            <Image className="rounded-t-lg" width={150} height={150} src={item.image} />
           </div>
           <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{item.name[1]}</h1>
           <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{item.description}</h2>
@@ -67,6 +66,10 @@ const TradePage = () => {
           {/* Buy CTA */}
           {item.price && (<div className="flex items-center justify-between">
             <span className="text-3xl font-bold text-gray-900 dark:text-white"><FaEthereum />{`${utils.formatUnits(item.price).slice(0, 6)}`}</span>
+            <span className="text-3xl font-bold text-gray-900 dark:text-white"><FaDollarSign /> {(
+              ethers.utils.formatEther(item.price) * ethPrice
+            ).toFixed(5)}</span>
+
             <BuyTrade id={item.id} price={item.price} />
           </div>)}
 

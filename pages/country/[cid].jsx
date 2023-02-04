@@ -21,7 +21,6 @@ const SearchPage = () => {
     return name.indexOf(search?.toLowerCase()) !== -1;
   });
 
-  console.log(filteredItems, "filteredItems");
 
 
   return (
