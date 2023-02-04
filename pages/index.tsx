@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic';
 import Layout from '../components/Layouts/layout';
 import { ReactElement } from 'react';
 import { GetAllItems } from '../components/BlockchainApi/ListedTokens.jsx';
+import Trade from '../components/Trade/TradeCard';
+import { useIsMounted } from "../components/Utils/mounted";
 
 const TradesListNoSSR = dynamic(() => import('../components/BlockchainApi/listTrades'), {
   ssr: false,
@@ -21,6 +23,8 @@ interface HomeProps {
 
 const HomePage: NextPageWithLayout = (props: HomeProps) => {
   const {data, trades} = GetAllItems();
+    const mounted = useIsMounted();
+
   console.log(trades);
   return (
     <section>
@@ -28,7 +32,8 @@ const HomePage: NextPageWithLayout = (props: HomeProps) => {
         <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Open <mark className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">trades</mark></h1>
         <p className="font-light mb-8 text-gray-500 sm:text-xl">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloribus, iure quod? Obcaecati ipsa voluptate eos cumque, ex amet sunt quia tempore sapiente et id, optio aut repellat ad? Sed, maiores?</p>
         <div>
-          <TradesListNoSSR />
+          {/* <TradesListNoSSR /> */}
+        {  mounted ? <Trade/> : null}
         </div>
       </div>
       <div className="text-center">

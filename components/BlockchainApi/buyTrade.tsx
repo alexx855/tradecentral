@@ -1,12 +1,13 @@
 import { BigNumber } from "ethers";
 import React from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
-import { TradeProps } from "../Trade/TradeCard";
+import { GetAllItems } from "./ListedTokens";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 
-const BuyTrade = ({ id, price, seller }: TradeProps) => {
+const BuyTrade = (id: any, price: any) => {
+  const { trades } = GetAllItems();
   const { address, isConnected } = useAccount();
   console.log(price)
   const { config } = usePrepareContractWrite({

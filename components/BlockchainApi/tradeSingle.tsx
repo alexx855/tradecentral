@@ -6,7 +6,6 @@ import BuyTrade from '../BlockchainApi/buyTrade';
 import SellerInfo from './SellerInfo';
 import { useContractRead } from 'wagmi';
 import Link from 'next/link';
-import { CLIENT_RENEG_LIMIT } from 'tls';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -93,15 +92,13 @@ const Trade = ({ tid }: { tid: number }) => {
     functionName: "lookTrades",
   });
 
-  console.log(data)
-
   return (
     <div className="px-4 pb-4 w-full  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       {data && (<>
         <h1 className="mt-4 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">We invest in the world’s potential</h1>
         <div className='my-8'>
           {/* TODO: load image from lighthouse */}
-          <Image className="rounded-t-lg" width={50} height={50} src={data.image} alt={`Trade #${tid} image`} />
+          <Image className="rounded-t-lg" src={data.image || tradePlaceholderPic} alt={`Trade #${tid} image`} />
         </div>
         <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{data.name[1]}</h1>
         <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{data.description}</h2>

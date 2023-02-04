@@ -27,6 +27,9 @@
 "components/LightHouse/LighHouse.jsx"
 ,
 "components/BlockchainApi/ListedTokens.jsx"
+,
+"components/Trade/TradeCard.jsx",
+"pages/trade/[id].jsx"
 ],
   "exclude": [
     "node_modules",
