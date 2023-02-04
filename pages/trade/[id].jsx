@@ -70,8 +70,8 @@ const TradePage = () => {
               ethers.utils.formatEther(item.price) * ethPrice
             ).toFixed(4)}</span>
 
-            <BuyTrade id={item.id} price={item.price} />
           </div>)}
+          <BuyTrade id={item.id} price={item.price} />
 
           {/* Seller info */}
           {item.seller && (<div className="">

@@ -12,13 +12,12 @@ const Trade = () => {
 
 
   return (
-    <>
+    <div className='grid grid-rows-2 w-full items-center '>
       {
         trades?.map((trade) => (
 
           <div key={trade.id} className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <Link href={`/trade/${trade.id}`} >
-              {/* TODO: load real images, this is just a placeholder */}
               <Image className="w-full h-auto mb-4" width={50} height={50} src={trade.image} alt={`${trade.name} image`} />
             </Link>
             <div className="px-5 pb-5">
@@ -36,7 +35,7 @@ const Trade = () => {
             </div>
           </div>
         ))}
-    </>
+    </div>
   );
 };
 
