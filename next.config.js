@@ -5,24 +5,7 @@ const nextConfig = {
   swcMinify: false,
   images: {
     domains: ['gateway.lighthouse.storage', "i.imgur.com"],
-
   },
 }
 
-
-webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-  config.module.rules.push({
-    test: /\.md$/,
-    use: [
-      {
-        loader: "ipfs-loader",
-        options: {
-          ipfsGateway: "gateway.lighthouse.storage",
-        },
-      },
-    ],
-  });
-  return config;
-},
-
-  module.exports = nextConfig;
+module.exports = nextConfig;

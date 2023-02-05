@@ -27,9 +27,6 @@ export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
         "name": "lookAllTrades",
         "outputs": [
           {
-            "internalType": "struct TradeCentral.Trade[]",
-            "name": "",
-            "type": "tuple[]",
             "components": [
               {
                 "internalType": "uint256",
@@ -80,8 +77,16 @@ export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
                 "internalType": "bool",
                 "name": "isSold",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "staking",
+                "type": "bool"
               }
-            ]
+            ],
+            "internalType": "struct TradeCentral.TradeData[]",
+            "name": "",
+            "type": "tuple[]"
           }
         ],
         "stateMutability": "view",

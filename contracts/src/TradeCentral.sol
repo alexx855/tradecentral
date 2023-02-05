@@ -337,7 +337,11 @@ contract TradeCentral is ReentrancyGuard {
             "Max 30 characters for category"
         );
         require(bytes(_country).length <= 30, "Max 30 characters for country");
-
+        
+        if (bytes(_image).length == 0) {
+            _image = "QmX54vAab7hFB2XXuH9v1mcMLm2VyvbH5R65hSB7qytebZ";
+        }
+        
         // create SEO friendly name, category and country, no special characters, we store the original name, category and country in the mapping
         string memory _clean_name = normalizeString(_name);
         string memory _clean_category = normalizeString(_category);
@@ -352,9 +356,6 @@ contract TradeCentral is ReentrancyGuard {
         _indexed_country[0] = _clean_country;
         _indexed_country[1] = _country;
 
-        if (bytes(_image).length == 0) {
-            _image = "";
-        }
 
         tradeCount++;
         uint256 _tradeId = tradeCount;

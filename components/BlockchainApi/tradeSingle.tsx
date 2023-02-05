@@ -98,12 +98,18 @@ const Trade = ({ tid }: { tid: number }) => {
   return (
     <div className="px-4 pb-4 w-full  bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       {data && (<>
-        <h1 className="mt-4 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">We invest in the world’s potential</h1>
-        <div className='my-8'>
-          {/* TODO: load image from lighthouse */}
-          <Image className="rounded-t-lg" width={50} height={50} src={data.image} alt={`Trade #${tid} image`} />
+        <h1 className="mt-4 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">{data.name[1]}</h1>
+        <div className="my-8 w-full h-[400px] relative">
+          <Image fill
+            sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              33vw"
+            className="rounded-t-lg object-scale-down"
+            src={data.image.length > 0 ? `https://gateway.lighthouse.storage/ipfs/${data.image}` : tradePlaceholderPic}
+            alt={`Trade #${tid} image`}
+          />
         </div>
-        <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{data.name[1]}</h1>
+
         <h2 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{data.description}</h2>
 
         {/* Buy CTA */}

@@ -2,8 +2,8 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Address, useAccount, useContractRead } from 'wagmi';
-import Balance from '../BlockchainApi/balance';
-import UserFrom from '../BlockchainApi/UserForm';
+// import Balance from '../BlockchainApi/balance';
+// import UserFrom from '../BlockchainApi/UserForm';
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -98,14 +98,13 @@ const User = (props: UserProps) => {
     functionName: "lookUsers",
   });
 
-
   useEffect(() => {
     setDisplayUserFrom(isConnected && address === props.address);
   }, [props.address, address, isConnected])
 
   return (
     <section id={`user-${props.address}`}>
-      <Balance />
+      {/* <Balance /> */}
 
       <div className="items-center justify-center flex flex-col">
         {props.image ? (
@@ -120,14 +119,14 @@ const User = (props: UserProps) => {
           {props.name ? (<span className="text-gray-500 ">{props.name}</span>) : trimAddress(props.address)}
         </h3>
 
-        {displayUserFrom ? (
+        {/* {displayUserFrom ? (}
           <UserFrom address={props.address} email={userData?.email} name={userData?.name} />
         ) : (
           <>
             <p className="text-gray-500 dark:text-gray-400">{props.name}</p>
             <p className="text-gray-500 dark:text-gray-400">{props.email}</p>
           </>
-        )}
+        )  */}
       </div>
     </section>
   );

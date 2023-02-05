@@ -45,19 +45,19 @@ async function main() {
   console.log(`Total trades on the contract: ${totalTrades}`);
   console.log(`Total users on the contract: ${totalUsers}`);
 
-  if (totalUsers.isZero()) {
-    // Create the users' accounts on the TradeCentral contract
-    for (const userWallet of usersWallets) {
-      const contractWithWallet = TradeCentral.connect(userWallet);
-      const user = { email: randEmail(), name: randFullName() };
-      // const userExists = await TradeCentral.userExists(userWallet.address);
-      // console.log(`User ${user.name} with email ${user.email} exists: ${userExists}`);
-      // if (userExists) continue;
-      const tx = await contractWithWallet.createUser(user.email, user.name, "");
-      const receipt = await tx.wait();
-      console.log(`User ${user.name} created with email ${user.email} at block ${receipt.blockNumber}`);
-    }
-  }
+  // if (totalUsers.isZero()) {
+  //   // Create the users' accounts on the TradeCentral contract
+  //   for (const userWallet of usersWallets) {
+  //     const contractWithWallet = TradeCentral.connect(userWallet);
+  //     const user = { email: randEmail(), name: randFullName() };
+  //     // const userExists = await TradeCentral.userExists(userWallet.address);
+  //     // console.log(`User ${user.name} with email ${user.email} exists: ${userExists}`);
+  //     // if (userExists) continue;
+  //     const tx = await contractWithWallet.createUser(user.email, user.name, "");
+  //     const receipt = await tx.wait();
+  //     console.log(`User ${user.name} created with email ${user.email} at block ${receipt.blockNumber}`);
+  //   }
+  // }
 
   // if (totalTrades.isZero()) {
     // Create a new trades for each user
@@ -72,7 +72,7 @@ async function main() {
           `${randProductDescription()}`,
           randProductCategory(),
           randCountry(),
-          ""
+          "QmaXLxoMSZpRkeoDAmTeBZDKYd2AhGqZvp5qaTLRUzAPiq"
         );
 
         const receipt = await tx.wait();

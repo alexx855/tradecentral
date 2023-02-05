@@ -84,6 +84,10 @@ contract TradeCentralTest is Test {
         createTrade();
         // assert trade count
         assertEq(trade.getTotalTrades(), 1);
+
+        // assert default image hash
+        TradeCentral.TradeData memory tradeData = trade.lookTrades(1);
+        assertEq(tradeData.image, "QmX54vAab7hFB2XXuH9v1mcMLm2VyvbH5R65hSB7qytebZ");
     }
 
     function testCancelTrade() public {

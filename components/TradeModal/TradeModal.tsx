@@ -3,17 +3,16 @@ import React, { useState } from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 import lighthouse from '@lighthouse-web3/sdk';
-const API_KEY = process.env.NEXT_PUBLIC__LIGHTHOUSE_API
-
+const API_KEY = process.env.NEXT_PUBLIC_LIGHTHOUSE_API
 
 const Modal = () => {
   const [showModal, setShowModal] = useState(false);
   const { address, isConnected } = useAccount();
   const [price, setPrice] = useState(99);
-  const [tokenURI, setTokenURI] = useState("imghash");
-  const [name, setName] = useState("name");
-  const [desc, setDesc] = useState("desc");
-  const [category, setCategory] = useState("category");
+  const [tokenURI, setTokenURI] = useState("");
+  const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
+  const [category, setCategory] = useState("");
   const [country, setCountry] = useState("");
   // const { chain } = useNetwork()
 
@@ -27,46 +26,45 @@ const Modal = () => {
       gasLimit: BigNumber.from(1000000),
     },
     abi: [
-     	{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "_price",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "_name",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_description",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_category",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_country",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_image",
-						"type": "string"
-					}
-				],
-				"name": "createTrade",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_category",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_country",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_image",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "name": "createTrade"
+      },
     ],
-    args: [ethers.BigNumber.from(price), name, desc, tokenURI, country, category],
+    args: [ethers.BigNumber.from(price), name, desc, category, country, tokenURI],
     functionName: "createTrade",
     onError(err) {
       console.log("error", err)
@@ -108,10 +106,15 @@ const progressCallback = (progressData: ProgressData) => {
 
   const deploy = async (e: any) => {
     // Push file to lighthouse node
-    const output = await lighthouse.upload(e, "38052b02-fa7c-44e9-beba-0df2baa98eea", progressCallback);
-    const uri = 'https://gateway.lighthouse.storage/ipfs/' + output.data.Hash;
-    setTokenURI(uri);
-    console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
+    const output = await lighthouse.upload(e, API_KEY!, progressCallback);
+    // const uri = 'https://gateway.lighthouse.storage/ipfs/' + output.data.Hash;
+    console.log(output.data.Hash);
+    if (output.data.Hash) {
+      setTokenURI(output.data.Hash);
+    } else {
+      console.log("error uploading image");
+    }
+    // console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
   }
 
 
