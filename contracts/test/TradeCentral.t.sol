@@ -92,6 +92,7 @@ contract TradeCentralTest is Test {
         // assert trade count
         assertEq(trade.getTotalTrades(), 1);
         // cancel trade that is not yours, should revert
+        vm.prank(vm.addr(2));
         vm.expectRevert("Invalid seller");
         trade.cancelTrade(1);
         // assert trade count

@@ -28,6 +28,7 @@ contract TradeCentral is ReentrancyGuard {
         string[] category;
         string[] country;
         bool isSold;
+        bool staking;
     }
     uint256 public tradeCount = 0;
     mapping(uint256 => TradeData) public tradesMap;
@@ -106,26 +107,24 @@ contract TradeCentral is ReentrancyGuard {
         return result;
     }
 
-    function getSearchTerm( string memory _term) public view returns (string memory) {
+    function getSearchTerm(string memory _term)
+        public
+        view
+        returns (string memory)
+    {
         // this will try to guess what the user is searching for, and return the real name, category or country
         bytes32 termHash = keccak256(abi.encodePacked(_term));
 
-        if ( categoryToTradeIds[termHash].length > 0) {
-            return tradesMap[
-                categoryToTradeIds[termHash][0]
-            ].category[1];
+        if (categoryToTradeIds[termHash].length > 0) {
+            return tradesMap[categoryToTradeIds[termHash][0]].category[1];
         }
 
-        if ( countryToTradeIds[termHash].length > 0) {
-            return tradesMap[
-                countryToTradeIds[termHash][0]
-            ].country[1];
+        if (countryToTradeIds[termHash].length > 0) {
+            return tradesMap[countryToTradeIds[termHash][0]].country[1];
         }
 
-        if ( nameToTradeId[termHash].length > 0) {
-            return tradesMap[
-                nameToTradeId[termHash][0]
-            ].name[1];
+        if (nameToTradeId[termHash].length > 0) {
+            return tradesMap[nameToTradeId[termHash][0]].name[1];
         }
 
         // if we get here, we didn't find anything, so return the original term
@@ -339,8 +338,6 @@ contract TradeCentral is ReentrancyGuard {
         );
         require(bytes(_country).length <= 30, "Max 30 characters for country");
 
-     
-
         // create SEO friendly name, category and country, no special characters, we store the original name, category and country in the mapping
         string memory _clean_name = normalizeString(_name);
         string memory _clean_category = normalizeString(_category);
@@ -355,19 +352,24 @@ contract TradeCentral is ReentrancyGuard {
         _indexed_country[0] = _clean_country;
         _indexed_country[1] = _country;
 
+        if (bytes(_image).length == 0) {
+            _image = "";
+        }
+
         tradeCount++;
         uint256 _tradeId = tradeCount;
         tradesMap[_tradeId] = TradeData(
             _tradeId,
-            address(0),
-            msg.sender,
+            address(0), // reserved for buyer
+            msg.sender, // seller
             _price,
             _description,
             _image,
             _indexed_name,
             _indexed_category,
             _indexed_country,
-            false
+            false, // isSold
+            false // staking
         );
 
         nameToTradeId[keccak256(abi.encodePacked(_clean_name))].push(_tradeId);
@@ -541,20 +543,37 @@ contract TradeCentral is ReentrancyGuard {
         require(tradesMap[_itemId].seller != address(0), "Invalid seller");
         require(tradesMap[_itemId].seller != msg.sender, "Invalid seller");
         tradesMap[_itemId].buyer = msg.sender;
-        // payable(tradesMap[_itemId].seller).transfer(msg.value);
-        // delete tradesMap[_itemId];
-        // tradeCount--;
+        tradesMap[_itemId].isSold = true;
+        emit TradeCompleted(
+            _itemId,
+            tradesMap[_itemId].buyer,
+            tradesMap[_itemId].seller,
+            tradesMap[_itemId].price
+        );
     }
 
-    //@dev function for set in true the isSold
-    function staking(uint256 _itemId) public nonReentrant {
-        require(tradesMap[_itemId].isSold == false, "Invalid trade, item sold");
+    event TradeCompleted(
+        uint256 _itemId,
+        address _buyer,
+        address _seller,
+        uint256 _price
+    );
+
+    function staking(uint256 _itemId) public payable nonReentrant {
+        require(tradesMap[_itemId].isSold == true, "Invalid trade");
+        require(
+            tradesMap[_itemId].staking == false,
+            "Invalid trade, item sold"
+        );
         require(tradesMap[_itemId].seller == msg.sender, "Invalid seller");
-        tradesMap[_itemId].isSold = true;
         payable(tradesMap[_itemId].seller).transfer(tradesMap[_itemId].price);
+        tradesMap[_itemId].staking = true;
         delete tradesMap[_itemId];
         tradeCount--;
+        emit StakingComlpeted(_itemId);
     }
+
+    event StakingComlpeted(uint256 _itemId);
 
     //@dev function for cancel one trade
     function cancelTrade(uint256 _itemId) public nonReentrant {
@@ -562,6 +581,16 @@ contract TradeCentral is ReentrancyGuard {
         require(tradesMap[_itemId].isSold == false, "Invalid trade, item sold");
         require(tradesMap[_itemId].seller != address(0), "Invalid address");
         require(tradesMap[_itemId].seller == msg.sender, "Invalid seller");
+
+        if (
+            tradesMap[_itemId].isSold == true &&
+            tradesMap[_itemId].staking == false
+        ) {
+            payable(tradesMap[_itemId].buyer).transfer(
+                tradesMap[_itemId].price
+            );
+        }
+
         delete tradesMap[_itemId];
         tradeCount--;
     }
