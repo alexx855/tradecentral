@@ -14,8 +14,7 @@ const SearchPage = () => {
   const { trades } = GetAllItems();
   const country = useRouter();
   const search = country.query.cid;
-  console.log(trades, "tradees")
-  console.log(search)
+
   let filteredItems = trades?.filter(item => {
     let name = item.country.toLowerCase();
     return name.indexOf(search?.toLowerCase()) !== -1;
