@@ -115,7 +115,7 @@ export const ListTrades = ({ user, filterClosed = false }: ListTradeProps) => {
       ) : data && data.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {/* workarround to limit it to 6, please update the contract and add some kind of pagination */}
-              {data.slice(0, 6).map((trade) => (<TradeCard key={trade.id.toNumber()}  />))}
+              {data.slice(0, 6).map((trade) => (<TradeCard showLink key={trade.id.toNumber()} {...trade} />))}
         </div>
       ) : (
         <div className="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">

@@ -22,21 +22,10 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-,
-"components/LightHouse/LighHouse.jsx"
-,
-"components/BlockchainApi/ListedTokens.jsx"
-,
-"components/Trade/TradeCard.jsx",
-"pages/trade/[id].jsx"
-,
-"components/User/User.jsx"
-,
-"pages/category/[cid].jsx"
-,
-"pages/country/[cid].jsx"
-],
+    "**/*.tsx",
+    "components/LightHouse/LighHouse.jsx",
+    "components/BlockchainApi/ListedTokens.jsx"
+  ],
   "exclude": [
     "node_modules",
     "hardhat"

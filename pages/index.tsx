@@ -14,14 +14,10 @@ const ListCountriesNoSSR = dynamic(() => import('../components/BlockchainApi/Lis
   ssr: false,
 })
 
-
-
 interface HomeProps {
 }
 
 const HomePage: NextPageWithLayout = (props: HomeProps) => {
-  const { data, trades } = GetAllItems();
-  console.log(trades);
   return (
     <section>
       <div className="mb-8 text-center">
